@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { FAVICON_URL } from '../lib/assetUrl'
 import { isSupabaseConfigured } from '../lib/supabase'
 
 type AuthMode = 'signin' | 'signup' | 'forgot'
@@ -102,7 +103,7 @@ export function AuthScreen() {
       <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-sm dark:border-border-strong dark:bg-[#243038]">
         <div className="mb-6 flex items-center gap-2.5">
           <img
-            src="/favicon.svg"
+            src={FAVICON_URL}
             alt=""
             className="h-10 w-10 rounded-lg shadow-sm"
             aria-hidden="true"

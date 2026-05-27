@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { FAVICON_URL } from '../lib/assetUrl'
 
 const inputClassName =
   'w-full rounded-xl border border-border bg-surface px-3 py-2 text-ink outline-none transition-colors focus:border-mint-400 dark:border-border-strong dark:bg-[#1a2428] dark:text-mint-50 dark:focus:border-mint-500'
@@ -35,7 +36,7 @@ export function ResetPasswordScreen() {
       <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-sm dark:border-border-strong dark:bg-[#243038]">
         <div className="mb-6 flex items-center gap-2.5">
           <img
-            src="/favicon.svg"
+            src={FAVICON_URL}
             alt=""
             className="h-10 w-10 rounded-lg shadow-sm"
             aria-hidden="true"

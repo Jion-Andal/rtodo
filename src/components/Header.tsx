@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { ConfirmModal } from './ConfirmModal'
+import { FAVICON_URL } from '../lib/assetUrl'
 import { GroupSelector } from './GroupSelector'
 
 interface HeaderProps {
@@ -25,7 +26,7 @@ export function Header({ showCompleted = false }: HeaderProps) {
       <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2.5">
           <img
-            src="/favicon.svg"
+            src={FAVICON_URL}
             alt=""
             className="h-9 w-9 rounded-lg shadow-sm"
             aria-hidden="true"

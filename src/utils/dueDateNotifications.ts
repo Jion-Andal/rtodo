@@ -1,3 +1,4 @@
+import { assetUrl } from '../lib/assetUrl'
 import type { Entry } from '../types'
 
 const NOTIFIED_STORAGE_KEY = 'rtodo-due-notified'
@@ -94,7 +95,7 @@ export function showDueDateNotification(entry: DueTodayEntry) {
   const label = entry.category === 'checklist' ? 'Checklist' : 'Note'
   new Notification('RTodo — Due today', {
     body: `${label}: ${entry.title}`,
-    icon: '/favicon.svg',
+    icon: new URL(assetUrl('favicon.svg'), window.location.href).href,
     tag: getNotificationKey(entry.id, getTodayDateString()),
   })
 }
