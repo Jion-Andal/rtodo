@@ -1,5 +1,11 @@
 import type { ChecklistEntry, Entry, ExpenseEntry } from '../types'
-import { eventShowsCheckbox, getExpenseSplit, getExpenseTotal, REPEAT_LABELS } from '../types'
+import {
+  eventShowsCheckbox,
+  getExpenseSplit,
+  getExpenseSplitCount,
+  getExpenseTotal,
+  REPEAT_LABELS,
+} from '../types'
 import { DeleteIcon, EditIcon, IconButton } from './IconButton'
 
 interface ItemCardProps {
@@ -50,6 +56,7 @@ function ExpenseDetails({
   formatCurrency: (amount: number) => string
 }) {
   const total = getExpenseTotal(entry)
+  const splitCount = getExpenseSplitCount(entry)
   const split = getExpenseSplit(entry)
 
   return (
@@ -68,7 +75,7 @@ function ExpenseDetails({
         ))}
       </ul>
       <p className="mt-1.5 text-xs font-medium text-sage-500 dark:text-sage-300">
-        Split: {formatCurrency(split)}
+        Split (÷ {splitCount}): {formatCurrency(split)}
       </p>
       <p className="text-[11px] text-ink-faint">
         Total: {formatCurrency(total)}

@@ -29,6 +29,9 @@ interface ExpenseFormProps {
 export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
   const { addEntry, updateEntry } = useEntries()
   const [title, setTitle] = useState(entry?.title ?? '')
+  const [splitCount, setSplitCount] = useState(
+    String(entry?.splitCount ?? 2),
+  )
   const [lineItems, setLineItems] = useState<LineItemDraft[]>(
     entry?.items.map((item) => ({
       description: item.description,
@@ -45,8 +48,10 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
       (item) => item.description && !isNaN(item.amount) && item.amount > 0,
     )
 
+  const parsedSplitCount = Math.max(1, parseInt(splitCount, 10) || 2)
   const draftTotal = parsedItems.reduce((sum, item) => sum + item.amount, 0)
-  const draftSplit = draftTotal > 0 ? draftTotal / 2 : null
+  const draftSplit =
+    draftTotal > 0 ? draftTotal / parsedSplitCount : null
 
   const addLineItem = () => setLineItems((prev) => [...prev, emptyLineItem()])
   const removeLineItem = (index: number) =>
@@ -73,6 +78,7 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
         description: item.description,
         amount: item.amount,
       })),
+      splitCount: parsedSplitCount,
       completed: entry?.completed ?? false,
       createdAt: entry?.createdAt ?? new Date().toISOString(),
     }
@@ -196,6 +202,18 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
         </button>
       </div>
 
+      <FormField label="Split between">
+        <input
+          type="number"
+          min="1"
+          step="1"
+          value={splitCount}
+          onChange={(e) => setSplitCount(e.target.value)}
+          className={`${inputClassName} w-24 tabular-nums`}
+          required
+        />
+      </FormField>
+
       {draftSplit !== null && (
         <div className="rounded-xl bg-sage-100 px-4 py-3 dark:bg-sage-500/10">
           <p className="text-sm text-sage-500 dark:text-sage-300">
@@ -203,7 +221,7 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
             <span className="font-semibold">{formatCurrency(draftTotal)}</span>
           </p>
           <p className="mt-1 text-sm text-sage-500 dark:text-sage-300">
-            Split amount (÷ 2):{' '}
+            Split amount (÷ {parsedSplitCount}):{' '}
             <span className="font-semibold">{formatCurrency(draftSplit)}</span>
           </p>
         </div>

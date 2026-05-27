@@ -48,14 +48,19 @@ export interface ExpenseLineItem {
 export interface ExpenseEntry extends BaseEntry {
   category: 'expenses'
   items: ExpenseLineItem[]
+  splitCount?: number
 }
 
 export function getExpenseTotal(entry: ExpenseEntry): number {
   return entry.items.reduce((sum, item) => sum + item.amount, 0)
 }
 
+export function getExpenseSplitCount(entry: ExpenseEntry): number {
+  return entry.splitCount ?? 2
+}
+
 export function getExpenseSplit(entry: ExpenseEntry): number {
-  return getExpenseTotal(entry) / 2
+  return getExpenseTotal(entry) / getExpenseSplitCount(entry)
 }
 
 export type Entry = ChecklistEntry | NoteEntry | EventEntry | ExpenseEntry
