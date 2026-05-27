@@ -77,10 +77,9 @@ create policy "Users read own memberships"
   on public.group_members for select
   using (auth.uid() = user_id);
 
-drop policy if exists "Users insert own membership" on public.group_members;
-create policy "Users insert own membership"
-  on public.group_members for insert
-  with check (auth.uid() = user_id);
+-- Membership inserts only via SECURITY DEFINER RPCs (prevents join-by-guessing group_id)
+revoke insert on public.group_members from authenticated;
+revoke insert on public.group_members from anon;
 
 drop policy if exists "Users delete own membership" on public.group_members;
 create policy "Users delete own membership"
@@ -350,3 +349,24 @@ $$;
 
 revoke all on function public.list_rtodo_group_members(uuid) from public;
 grant execute on function public.list_rtodo_group_members(uuid) to authenticated;
+
+-- Prevent changing entry workspace or owner on update
+create or replace function public.lock_rtodo_entry_scope()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if new.user_id is distinct from old.user_id
+     or new.group_id is distinct from old.group_id then
+    raise exception 'Cannot change entry ownership or workspace';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists lock_rtodo_entry_scope on public.rtodo_entries;
+create trigger lock_rtodo_entry_scope
+  before update on public.rtodo_entries
+  for each row
+  execute function public.lock_rtodo_entry_scope();

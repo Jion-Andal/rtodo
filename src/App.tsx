@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { EntriesProvider } from './context/EntriesContext'
-import { GroupsProvider } from './context/GroupsContext'
+import { GroupsProvider, useGroups } from './context/GroupsContext'
+import { JoinGroupInviteModal } from './components/JoinGroupInviteModal'
 import { AuthScreen } from './components/AuthScreen'
 import { ResetPasswordScreen } from './components/ResetPasswordScreen'
 import { Header } from './components/Header'
@@ -11,6 +12,26 @@ import { CategoryView } from './components/CategoryView'
 import { DueDateAlert } from './components/DueDateAlert'
 import { useDueDateNotifications } from './hooks/useDueDateNotifications'
 import type { Category } from './types'
+
+function JoinGroupInviteGate() {
+  const {
+    pendingJoinCode,
+    joining,
+    joinError,
+    confirmJoinInvite,
+    dismissJoinInvite,
+  } = useGroups()
+
+  return (
+    <JoinGroupInviteModal
+      open={pendingJoinCode !== null}
+      joining={joining}
+      error={joinError}
+      onConfirm={() => void confirmJoinInvite()}
+      onCancel={dismissJoinInvite}
+    />
+  )
+}
 
 function AppContent() {
   const [activeCategory, setActiveCategory] = useState<Category>('checklist')
@@ -44,6 +65,7 @@ function AppContent() {
       </div>
 
       <DueDateAlert entries={inAppAlerts} onDismiss={dismissInAppAlerts} />
+      <JoinGroupInviteGate />
     </>
   )
 }

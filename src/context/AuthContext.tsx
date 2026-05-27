@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js'
+import { MIN_PASSWORD_LENGTH } from '../lib/constants'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 
 export interface SignUpInput {
@@ -139,7 +140,7 @@ function mapAuthError(message: string): string {
     return 'Invalid username or password.'
   }
   if (lower.includes('password')) {
-    return 'Password must be at least 6 characters.'
+    return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
   }
   return message
 }
@@ -202,11 +203,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(({ data }) => {
         setSession(data.session)
         void loadProfile(data.session?.user)
-
-        const hash = window.location.hash
-        if (hash.includes('type=recovery')) {
-          setRecoveryMode(true)
-        }
       })
       .catch((err) => {
         console.error('Auth session check failed:', err)
@@ -251,8 +247,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (usernameValue.length < 3) {
       throw new Error('Username must be at least 3 characters.')
     }
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters.')
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      throw new Error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters.`)
     }
 
     const { data, error } = await supabase.auth.signUp({
@@ -294,8 +290,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updatePassword = useCallback(async (password: string) => {
     if (!supabase) throw new Error('Supabase is not configured.')
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters.')
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      throw new Error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters.`)
     }
 
     const { error } = await supabase.auth.updateUser({ password })

@@ -1,10 +1,9 @@
 -- Run in Supabase SQL Editor if group creation fails with a generic error
 
--- group_members had SELECT policies but no INSERT policy; RLS blocked membership rows
+-- Close join bypass: membership only via RPC (see security-hardening.sql)
 drop policy if exists "Users insert own membership" on public.group_members;
-create policy "Users insert own membership"
-  on public.group_members for insert
-  with check (auth.uid() = user_id);
+revoke insert on public.group_members from authenticated;
+revoke insert on public.group_members from anon;
 
 -- Avoid pgcrypto dependency for invite codes
 alter table public.groups

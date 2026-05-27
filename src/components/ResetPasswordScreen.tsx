@@ -57,7 +57,7 @@ export function ResetPasswordScreen() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
               autoComplete="new-password"
               className={inputClassName}
             />
@@ -69,7 +69,7 @@ export function ResetPasswordScreen() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
               autoComplete="new-password"
               className={inputClassName}
             />

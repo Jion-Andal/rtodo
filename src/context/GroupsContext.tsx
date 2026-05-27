@@ -21,6 +21,7 @@ import {
   type CreateGroupResult,
   type RtodoGroup,
 } from '../services/rtodoGroupsSupabase'
+import { getErrorMessage } from '../utils/errorMessage'
 
 export const PERSONAL_GROUP_LABEL = 'Personal'
 
@@ -32,10 +33,14 @@ interface GroupsContextValue {
   creating: boolean
   joining: boolean
   removing: boolean
+  pendingJoinCode: string | null
+  joinError: string | null
   selectGroup: (groupId: string | null) => Promise<void>
   createNewGroup: (name: string) => Promise<CreateGroupResult>
   deleteGroupById: (groupId: string) => Promise<void>
   leaveGroupById: (groupId: string) => Promise<void>
+  confirmJoinInvite: () => Promise<void>
+  dismissJoinInvite: () => void
   refreshGroups: () => Promise<void>
 }
 
@@ -49,6 +54,8 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   const [creating, setCreating] = useState(false)
   const [joining, setJoining] = useState(false)
   const [removing, setRemoving] = useState(false)
+  const [pendingJoinCode, setPendingJoinCode] = useState<string | null>(null)
+  const [joinError, setJoinError] = useState<string | null>(null)
 
   const refreshGroups = useCallback(async () => {
     if (!user) {
@@ -78,6 +85,8 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     if (!user) {
       setGroups([])
       setActiveGroupIdState(null)
+      setPendingJoinCode(null)
+      setJoinError(null)
       setLoading(false)
       return
     }
@@ -88,26 +97,37 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false))
   }, [user, refreshGroups])
 
-  const processJoinLink = useCallback(async () => {
-    const code = getJoinCodeFromUrl()
-    if (!code || !user) return
-
-    setJoining(true)
-    try {
-      await joinGroupByInviteCode(code)
-      await refreshGroups()
-    } catch (err) {
-      console.error('Failed to join group:', err)
-    } finally {
-      clearJoinQueryFromUrl()
-      setJoining(false)
-    }
-  }, [user, refreshGroups])
-
   useEffect(() => {
     if (!user || loading) return
-    void processJoinLink()
-  }, [user, loading, processJoinLink])
+    const code = getJoinCodeFromUrl()
+    if (code) {
+      setPendingJoinCode(code)
+      setJoinError(null)
+    }
+  }, [user, loading])
+
+  const dismissJoinInvite = useCallback(() => {
+    setPendingJoinCode(null)
+    setJoinError(null)
+    clearJoinQueryFromUrl()
+  }, [])
+
+  const confirmJoinInvite = useCallback(async () => {
+    if (!user || !pendingJoinCode) return
+
+    setJoining(true)
+    setJoinError(null)
+    try {
+      await joinGroupByInviteCode(pendingJoinCode)
+      setPendingJoinCode(null)
+      clearJoinQueryFromUrl()
+      await refreshGroups()
+    } catch (err) {
+      setJoinError(getErrorMessage(err, 'Could not join group. Check the invite link.'))
+    } finally {
+      setJoining(false)
+    }
+  }, [user, pendingJoinCode, refreshGroups])
 
   const selectGroup = useCallback(
     async (groupId: string | null) => {
@@ -201,10 +221,14 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         creating,
         joining,
         removing,
+        pendingJoinCode,
+        joinError,
         selectGroup,
         createNewGroup,
         deleteGroupById,
         leaveGroupById,
+        confirmJoinInvite,
+        dismissJoinInvite,
         refreshGroups,
       }}
     >

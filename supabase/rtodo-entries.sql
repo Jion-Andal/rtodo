@@ -11,11 +11,8 @@ create index if not exists rtodo_entries_updated_at_idx on public.rtodo_entries 
 
 alter table public.rtodo_entries enable row level security;
 
+-- WARNING: Do not leave this policy in production. Run groups.sql next for scoped RLS.
 drop policy if exists "Authenticated users manage rtodo entries" on public.rtodo_entries;
-create policy "Authenticated users manage rtodo entries"
-  on public.rtodo_entries for all
-  using (auth.uid() is not null)
-  with check (auth.uid() is not null);
 
 alter table public.rtodo_entries replica identity full;
 
