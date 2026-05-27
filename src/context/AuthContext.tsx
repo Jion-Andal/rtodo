@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js'
+import { clearAuthParamsFromUrl, getAuthRedirectUrl } from '../lib/appUrl'
 import { MIN_PASSWORD_LENGTH } from '../lib/constants'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 
@@ -45,10 +46,6 @@ function withTimeout<T>(promise: PromiseLike<T>, ms: number, label: string): Pro
       setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
     }),
   ])
-}
-
-function getPasswordResetRedirectUrl(): string {
-  return `${window.location.origin}${window.location.pathname}`
 }
 
 interface ProfileRow {
@@ -187,6 +184,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRecoveryMode(false)
       }
 
+      if (
+        next &&
+        (event === 'SIGNED_IN' || event === 'PASSWORD_RECOVERY')
+      ) {
+        clearAuthParamsFromUrl()
+      }
+
       void loadProfile(next?.user)
     },
     [loadProfile],
@@ -198,6 +202,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false)
       return
     }
+
+    void (async () => {
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        const code = url.searchParams.get('code')
+        if (code) {
+          const { error } = await client.auth.exchangeCodeForSession(code)
+          if (error) {
+            console.error('Auth callback failed:', error)
+          } else {
+            clearAuthParamsFromUrl()
+          }
+        }
+      }
+    })()
 
     withTimeout(client.auth.getSession(), AUTH_INIT_TIMEOUT_MS, 'Auth session check')
       .then(({ data }) => {
@@ -255,6 +274,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
+        emailRedirectTo: getAuthRedirectUrl(),
         data: {
           username: usernameValue,
         },
@@ -283,7 +303,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!email) return
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: getPasswordResetRedirectUrl(),
+      redirectTo: getAuthRedirectUrl(),
     })
     if (error) throw new Error('Could not send reset email. Please try again.')
   }, [])
@@ -298,7 +318,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw new Error(mapAuthError(error.message))
 
     setRecoveryMode(false)
-    window.history.replaceState(null, '', window.location.pathname)
+    clearAuthParamsFromUrl()
   }, [])
 
   const signOut = useCallback(async () => {

@@ -72,6 +72,47 @@ Output: `android/app/build/outputs/apk/release/app-release.apk`
 
 Install the APK on a device (enable “Install unknown apps” for the file manager you use).
 
+## iOS release (Capacitor)
+
+Requires **macOS**, **Xcode**, and an [Apple Developer](https://developer.apple.com) account to install on physical devices.
+
+1. Copy `.env.example` to `.env.local` with your Supabase URL and anon key (baked into the build).
+2. Sync the web app into the native project:
+
+```bash
+npm run cap:sync
+```
+
+3. **Release IPA** (Mac terminal):
+
+```bash
+npm run ios:release
+```
+
+Output: `ios/App/build/export/App.ipa` (exact filename may vary)
+
+4. **Xcode alternative:** open the project, select your team under Signing & Capabilities, then **Product → Archive → Distribute App**.
+
+```bash
+npm run cap:ios
+```
+
+5. **GitHub Actions (Mac runner):** Actions → **iOS Release** → **Run workflow**.  
+   For a signed IPA artifact, add these repository secrets:
+
+| Secret | Value |
+|--------|--------|
+| `VITE_SUPABASE_URL` | Your Supabase project URL |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase **anon** public key |
+| `VITE_APP_URL` | Optional override; defaults to `https://jion-andal.github.io/rtodo` in `.env.production` |
+| `IOS_P12_BASE64` | Base64-encoded `.p12` distribution certificate |
+| `IOS_P12_PASSWORD` | Certificate password |
+| `IOS_KEYCHAIN_PASSWORD` | Temporary keychain password for CI |
+| `IOS_PROVISIONING_PROFILE_BASE64` | Base64-encoded provisioning profile |
+| `APPLE_TEAM_ID` | Apple Developer Team ID |
+
+Without signing secrets, the workflow still produces an unsigned `.xcarchive` for verification only (not installable on devices).
+
 ## Deploy on GitHub Pages
 
 ### 1. Repository secrets
@@ -82,6 +123,7 @@ In **GitHub → Settings → Secrets and variables → Actions**, add:
 |--------|--------|
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase **anon** public key |
+| `VITE_APP_URL` | Optional override; defaults to `https://jion-andal.github.io/rtodo` in `.env.production` |
 
 ### 2. Enable GitHub Pages
 
@@ -94,7 +136,11 @@ In **GitHub → Settings → Secrets and variables → Actions**, add:
 In **Supabase → Authentication → URL configuration**:
 
 - **Site URL:** `https://jion-andal.github.io/rtodo/`
-- **Redirect URLs:** add `https://jion-andal.github.io/rtodo/**`
+- **Redirect URLs:** add these (remove any `http://localhost` entries for production):
+  - `https://jion-andal.github.io/rtodo`
+  - `https://jion-andal.github.io/rtodo/**`
+
+Email confirmation, password reset, and group invite links use `VITE_APP_URL` (see `.env.production`). Mobile builds must include this value so links do not point at Capacitor’s `localhost` shell.
 
 ### 4. Manual deploy
 
@@ -108,9 +154,11 @@ Actions → **Deploy to GitHub Pages** → **Run workflow**
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Preview production build |
 | `npm run build:app` | Production build for mobile (`VITE_BASE_PATH=./`) |
-| `npm run cap:sync` | Build web app and sync to Android |
+| `npm run cap:sync` | Build web app and sync to Android/iOS |
+| `npm run cap:ios` | Open iOS project in Xcode (Mac) |
 | `npm run android:debug` | Build debug APK |
 | `npm run android:release` | Build release APK |
+| `npm run ios:release` | Build release IPA on Mac |
 | `npm run lint` | ESLint |
 
 ## Repository

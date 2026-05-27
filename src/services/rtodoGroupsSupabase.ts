@@ -1,5 +1,8 @@
+import { buildGroupInviteUrl } from '../lib/appUrl'
 import { supabase } from '../lib/supabase'
 import { getErrorMessage } from '../utils/errorMessage'
+
+export { buildGroupInviteUrl }
 
 interface CreateGroupRpcRow {
   group_id?: string
@@ -30,13 +33,6 @@ export interface CreateGroupResult {
 function requireClient() {
   if (!supabase) throw new Error('Supabase is not configured.')
   return supabase
-}
-
-export function buildGroupInviteUrl(inviteCode: string): string {
-  const url = new URL(window.location.href)
-  url.search = ''
-  url.searchParams.set('join', inviteCode)
-  return url.toString()
 }
 
 export async function fetchMyGroups(): Promise<RtodoGroup[]> {

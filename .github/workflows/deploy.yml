@@ -34,6 +34,7 @@ jobs:
         run: npm run build
         env:
           VITE_BASE_PATH: /rtodo/
+          VITE_APP_URL: https://jion-andal.github.io/rtodo
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
