@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="16" fill="#E8F8F5"/>
+  <!-- soft shadow ground -->
+  <ellipse cx="32" cy="54" rx="22" ry="4" fill="#B8EBE3" opacity="0.5"/>
+  <!-- person 1 (left, peach) -->
+  <ellipse cx="22" cy="46" rx="10" ry="12" fill="#8FD9CE"/>
+  <circle cx="22" cy="26" r="11" fill="#FFD4C8"/>
+  <circle cx="18.5" cy="24" r="1.8" fill="#5A6472"/>
+  <circle cx="25.5" cy="24" r="1.8" fill="#5A6472"/>
+  <path d="M17 29 Q22 33 27 29" stroke="#5A6472" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <circle cx="16" cy="27" r="2.5" fill="#FFB4A8" opacity="0.45"/>
+  <!-- person 2 (right, lavender) -->
+  <ellipse cx="42" cy="46" rx="10" ry="12" fill="#C9B8FF"/>
+  <circle cx="42" cy="26" r="11" fill="#FFE8DC"/>
+  <circle cx="38.5" cy="24" r="1.8" fill="#5A6472"/>
+  <circle cx="45.5" cy="24" r="1.8" fill="#5A6472"/>
+  <path d="M37 29 Q42 33 47 29" stroke="#5A6472" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <circle cx="48" cy="27" r="2.5" fill="#FFB4A8" opacity="0.45"/>
+  <!-- little heart between them -->
+  <path d="M32 38 C32 36 30 34.5 28.5 36 C27 34.5 25 36 25 38 C25 40 28.5 43 28.5 43 C28.5 43 32 40 32 38Z" fill="#F4A896" opacity="0.9"/>
+</svg>

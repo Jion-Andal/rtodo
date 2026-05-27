@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-cream: #faf8f5;
+  --color-cream-dark: #e8f0f5;
+  --color-mint-50: #f0faf8;
+  --color-mint-100: #dcf5f0;
+  --color-mint-200: #b8ebe3;
+  --color-mint-300: #8fd9ce;
+  --color-mint-400: #6ecfc4;
+  --color-mint-500: #4db8ac;
+  --color-mint-600: #3d9a90;
+  --color-peach-50: #fff8f5;
+  --color-peach-100: #fff0eb;
+  --color-peach-200: #ffd4c8;
+  --color-peach-300: #f4b8a8;
+  --color-peach-400: #f4a896;
+  --color-lavender-100: #f3eeff;
+  --color-lavender-200: #e4d9ff;
+  --color-lavender-300: #d4c4ff;
+  --color-lavender-400: #b8a4f0;
+  --color-lavender-500: #a894e8;
+  --color-sage-100: #edf7f0;
+  --color-sage-300: #a8d5b5;
+  --color-sage-500: #6db88a;
+  --color-ink: #5a6472;
+  --color-ink-muted: #8b95a5;
+  --color-ink-faint: #b0b9c6;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5faf9;
+  --color-border: #dceeea;
+  --color-border-strong: #c5ddd8;
+}
+
+html,
+body,
+#root {
+  min-height: 100dvh;
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  color: var(--color-ink);
+}
+
+button,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+.dark body {
+  color: #e2e8f0;
+}
