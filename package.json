@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "cap:sync": "npm run build:app && npx cap sync",
+    "assets:generate": "npx @capacitor/assets generate --android --ios --iconBackgroundColor \"#E8F8F5\" --iconBackgroundColorDark \"#243038\" --splashBackgroundColor \"#E8F8F5\" --splashBackgroundColorDark \"#1e2830\"",
     "cap:android": "npx cap open android",
     "cap:ios": "npx cap open ios",
     "android:debug": "npm run cap:sync && cd android && .\\gradlew.bat assembleDebug",
@@ -18,10 +19,10 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.3.4",
-    "@capacitor/ios": "^8.3.4",
     "@capacitor/app": "^8.1.0",
     "@capacitor/cli": "^8.3.4",
     "@capacitor/core": "^8.3.4",
+    "@capacitor/ios": "^8.3.4",
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.2",
     "@supabase/ssr": "^0.10.3",
@@ -32,6 +33,7 @@
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.12.3",
     "@types/react": "^19.2.14",

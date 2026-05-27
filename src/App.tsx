@@ -10,6 +10,7 @@ import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { CategoryView } from './components/CategoryView'
 import { DueDateAlert } from './components/DueDateAlert'
+import { RemoteChangesBanner } from './components/RemoteChangesBanner'
 import { useDueDateNotifications } from './hooks/useDueDateNotifications'
 import type { Category } from './types'
 
@@ -48,6 +49,7 @@ function AppContent() {
         }`}
       >
         <Header showCompleted={showCompleted} />
+        <RemoteChangesBanner />
 
         <main className="mx-auto w-full max-w-lg flex-1 overflow-y-auto pb-[calc(6rem+env(safe-area-inset-bottom,0px))] pt-4">
           <CategoryView

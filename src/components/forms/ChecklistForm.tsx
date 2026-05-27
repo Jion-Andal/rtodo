@@ -14,12 +14,10 @@ function createId() {
 
 interface ChecklistItemDraft {
   text: string
-  remarks: string
-  showRemark: boolean
 }
 
 function emptyItem(): ChecklistItemDraft {
-  return { text: '', remarks: '', showRemark: false }
+  return { text: '' }
 }
 
 interface ChecklistFormProps {
@@ -32,38 +30,22 @@ export function ChecklistForm({ entry, onSuccess }: ChecklistFormProps) {
   const [title, setTitle] = useState(entry?.title ?? '')
   const [dueDate, setDueDate] = useState(entry?.dueDate ?? '')
   const [items, setItems] = useState<ChecklistItemDraft[]>(
-    entry?.items.map((item) => ({
-      text: item.text,
-      remarks: item.remarks ?? '',
-      showRemark: Boolean(item.remarks),
-    })) ?? [emptyItem()],
+    entry?.items.map((item) => ({ text: item.text })) ?? [emptyItem()],
   )
 
   const addItem = () => setItems((prev) => [...prev, emptyItem()])
   const removeItem = (index: number) =>
     setItems((prev) => prev.filter((_, i) => i !== index))
-  const updateItem = (
-    index: number,
-    field: 'text' | 'remarks',
-    value: string,
-  ) =>
+  const updateItem = (index: number, value: string) =>
     setItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
-    )
-
-  const showRemarkField = (index: number) =>
-    setItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, showRemark: true } : item)),
+      prev.map((item, i) => (i === index ? { ...item, text: value } : item)),
     )
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const trimmedItems = items
-      .map((item) => ({
-        text: item.text.trim(),
-        remarks: item.remarks.trim(),
-      }))
-      .filter((item) => item.text)
+      .map((item) => item.text.trim())
+      .filter(Boolean)
 
     if (!title.trim() || trimmedItems.length === 0) return
 
@@ -72,10 +54,9 @@ export function ChecklistForm({ entry, onSuccess }: ChecklistFormProps) {
       category: 'checklist',
       title: title.trim(),
       dueDate: dueDate || undefined,
-      items: trimmedItems.map((item, index) => ({
+      items: trimmedItems.map((text, index) => ({
         id: entry?.items[index]?.id ?? createId(),
-        text: item.text,
-        remarks: item.remarks || undefined,
+        text,
         checked: entry?.items[index]?.checked ?? false,
       })),
       completed: entry?.completed ?? false,
@@ -118,41 +99,23 @@ export function ChecklistForm({ entry, onSuccess }: ChecklistFormProps) {
         <span className="mb-1.5 block text-sm font-medium text-ink dark:text-mint-100">
           Checklist items
         </span>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {items.map((item, index) => (
             <div
               key={index}
-              className={`grid items-center gap-2 rounded-xl border border-border bg-mint-50/60 p-2 dark:border-border-strong dark:bg-[#243038]/60 ${
+              className={`grid items-center gap-2 ${
                 items.length > 1
-                  ? 'grid-cols-[minmax(0,7fr)_minmax(0,3fr)_2rem]'
-                  : 'grid-cols-[minmax(0,7fr)_minmax(0,3fr)]'
+                  ? 'grid-cols-[minmax(0,1fr)_2rem]'
+                  : 'grid-cols-1'
               }`}
             >
               <input
                 type="text"
                 value={item.text}
-                onChange={(e) => updateItem(index, 'text', e.target.value)}
+                onChange={(e) => updateItem(index, e.target.value)}
                 className={`${inputClassName} min-w-0 bg-surface dark:bg-[#2a363e]`}
                 placeholder={`Item ${index + 1}`}
               />
-
-              {item.showRemark ? (
-                <input
-                  type="text"
-                  value={item.remarks}
-                  onChange={(e) => updateItem(index, 'remarks', e.target.value)}
-                  className={`${inputClassName} min-w-0 bg-surface dark:bg-[#2a363e]`}
-                  placeholder="Remark"
-                />
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => showRemarkField(index)}
-                  className={`${buttonSecondaryClassName} h-[42px] min-w-0 truncate px-2 text-xs`}
-                >
-                  Add a remark
-                </button>
-              )}
 
               {items.length > 1 && (
                 <button

@@ -13,7 +13,6 @@ export interface ChecklistItem {
   id: string
   text: string
   checked: boolean
-  remarks?: string
 }
 
 export interface ChecklistEntry extends BaseEntry {

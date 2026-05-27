@@ -45,13 +45,32 @@ export async function upsertEntry(
   groupId: string | null,
 ): Promise<void> {
   const client = requireClient()
+  const now = new Date().toISOString()
 
-  const { error } = await client.from('rtodo_entries').upsert({
+  const { data: existing, error: fetchError } = await client
+    .from('rtodo_entries')
+    .select('id')
+    .eq('id', entry.id)
+    .maybeSingle()
+
+  if (fetchError) throw fetchError
+
+  if (existing) {
+    const { error } = await client
+      .from('rtodo_entries')
+      .update({ data: entry, updated_at: now })
+      .eq('id', entry.id)
+
+    if (error) throw error
+    return
+  }
+
+  const { error } = await client.from('rtodo_entries').insert({
     id: entry.id,
     user_id: userId,
     group_id: groupId,
     data: entry,
-    updated_at: new Date().toISOString(),
+    updated_at: now,
   })
 
   if (error) throw error

@@ -68,6 +68,13 @@ npm run android:release
 
 Output: `android/app/build/outputs/apk/release/app-release.apk`
 
+Mobile app icons and splash screens are generated from `assets/icon.svg` (the RTodo logo). After updating the logo, run:
+
+```bash
+npm run assets:generate
+npm run cap:sync
+```
+
 5. In **Supabase → Authentication → URL configuration**, add your app origin if you use custom URL schemes later.
 
 Install the APK on a device (enable “Install unknown apps” for the file manager you use).
@@ -155,6 +162,7 @@ Actions → **Deploy to GitHub Pages** → **Run workflow**
 | `npm run preview` | Preview production build |
 | `npm run build:app` | Production build for mobile (`VITE_BASE_PATH=./`) |
 | `npm run cap:sync` | Build web app and sync to Android/iOS |
+| `npm run assets:generate` | Regenerate mobile app icons and splash screens |
 | `npm run cap:ios` | Open iOS project in Xcode (Mac) |
 | `npm run android:debug` | Build debug APK |
 | `npm run android:release` | Build release APK |

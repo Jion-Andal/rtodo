@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
@@ -19,6 +20,9 @@ import { supabase } from '../lib/supabase'
 interface EntriesContextValue {
   entries: Entry[]
   loading: boolean
+  hasRemoteChanges: boolean
+  refreshing: boolean
+  refreshEntries: () => Promise<void>
   addEntry: (entry: Entry) => void
   updateEntry: (entry: Entry) => void
   deleteEntry: (id: string) => void
@@ -27,6 +31,8 @@ interface EntriesContextValue {
   getByCategory: (category: Category, showCompleted: boolean) => Entry[]
 }
 
+const LOCAL_MUTATION_GRACE_MS = 2000
+
 const EntriesContext = createContext<EntriesContextValue | null>(null)
 
 export function EntriesProvider({ children }: { children: ReactNode }) {
@@ -34,6 +40,13 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
   const { activeGroupId, loading: groupsLoading } = useGroups()
   const [entries, setEntries] = useState<Entry[]>([])
   const [loading, setLoading] = useState(true)
+  const [hasRemoteChanges, setHasRemoteChanges] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const localWriteUntilRef = useRef(0)
+
+  const markLocalMutation = useCallback(() => {
+    localWriteUntilRef.current = Date.now() + LOCAL_MUTATION_GRACE_MS
+  }, [])
 
   const reloadEntries = useCallback(async () => {
     if (!user) {
@@ -48,6 +61,42 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
       console.error('Failed to load entries:', err)
     }
   }, [user, activeGroupId])
+
+  const refreshEntries = useCallback(async () => {
+    setRefreshing(true)
+    try {
+      await reloadEntries()
+      setHasRemoteChanges(false)
+    } finally {
+      setRefreshing(false)
+    }
+  }, [reloadEntries])
+
+  const handleRemoteChange = useCallback(() => {
+    if (Date.now() < localWriteUntilRef.current) {
+      void reloadEntries()
+      return
+    }
+    setHasRemoteChanges(true)
+  }, [reloadEntries])
+
+  useEffect(() => {
+    setHasRemoteChanges(false)
+    localWriteUntilRef.current = 0
+  }, [activeGroupId])
+
+  useEffect(() => {
+    if (!user) return
+
+    const params = new URLSearchParams(window.location.search)
+    if (!params.has('previewSyncBanner')) return
+
+    setHasRemoteChanges(true)
+    params.delete('previewSyncBanner')
+    const query = params.toString()
+    const next = window.location.pathname + (query ? `?${query}` : '') + window.location.hash
+    window.history.replaceState(null, '', next)
+  }, [user])
 
   useEffect(() => {
     if (!user) {
@@ -82,19 +131,27 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
           filter,
         },
         () => {
-          void reloadEntries()
+          handleRemoteChange()
         },
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (err) {
+          console.error('Entries realtime subscription error:', err)
+        }
+        if (status === 'CHANNEL_ERROR') {
+          console.error('Entries realtime channel error')
+        }
+      })
 
     return () => {
       void client.removeChannel(channel)
     }
-  }, [user, activeGroupId, groupsLoading, reloadEntries])
+  }, [user, activeGroupId, groupsLoading, handleRemoteChange])
 
   const persistEntry = useCallback(
     async (entry: Entry) => {
       if (!user) return
+      markLocalMutation()
       try {
         await upsertEntry(entry, user.id, activeGroupId)
       } catch (err) {
@@ -102,11 +159,12 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
         await reloadEntries()
       }
     },
-    [user, activeGroupId, reloadEntries],
+    [user, activeGroupId, reloadEntries, markLocalMutation],
   )
 
   const persistDelete = useCallback(
     async (id: string) => {
+      markLocalMutation()
       try {
         await deleteEntryById(id)
       } catch (err) {
@@ -114,7 +172,7 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
         await reloadEntries()
       }
     },
-    [reloadEntries],
+    [reloadEntries, markLocalMutation],
   )
 
   const addEntry = (entry: Entry) => {
@@ -175,6 +233,9 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
       value={{
         entries,
         loading,
+        hasRemoteChanges,
+        refreshing,
+        refreshEntries,
         addEntry,
         updateEntry,
         deleteEntry,

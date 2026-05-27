@@ -188,11 +188,6 @@ export function ItemCard({
                         {item.text}
                       </span>
                     </div>
-                    {item.remarks && (
-                      <p className="ml-2.5 mt-0.5 text-[11px] text-ink-muted dark:text-ink-faint">
-                        {item.remarks}
-                      </p>
-                    )}
                   </li>
                 ))}
               </ul>

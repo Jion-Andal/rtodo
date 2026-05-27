@@ -78,11 +78,6 @@ export function ChecklistItemsModal({ entryId, onClose }: ChecklistItemsModalPro
                   >
                     {item.text}
                   </span>
-                  {item.remarks && (
-                    <p className="mt-0.5 text-xs text-ink-muted dark:text-ink-faint">
-                      {item.remarks}
-                    </p>
-                  )}
                 </div>
               </button>
             </li>
