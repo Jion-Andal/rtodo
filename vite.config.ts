@@ -4,5 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: './',
+  // './' for local preview; '/rtodo/' for GitHub Pages (set in CI via VITE_BASE_PATH)
+  base: process.env.VITE_BASE_PATH ?? './',
 })
