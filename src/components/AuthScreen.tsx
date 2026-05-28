@@ -60,12 +60,7 @@ export function AuthScreen() {
     setMessage('')
     setSuccessMessage('')
     try {
-      const result = await signUp({ email, username, password })
-      if (result.needsEmailConfirmation) {
-        setSuccessMessage('Account created. Check your email to confirm, then sign in.')
-        setMode('signin')
-        setPassword('')
-      }
+      await signUp({ email, username, password })
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Sign up failed.')
     } finally {

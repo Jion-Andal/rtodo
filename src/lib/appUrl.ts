@@ -39,7 +39,7 @@ export function getAppBaseUrl(): string {
   return normalizeBaseUrl(`${origin}${path}`)
 }
 
-/** Redirect target for Supabase auth emails (confirm signup, password reset). */
+/** Redirect target for Supabase auth emails (password reset). */
 export function getAuthRedirectUrl(): string {
   const appBase = getAppBaseUrl()
   if (appBase && !isLocalShellOrigin(new URL(appBase).origin)) {

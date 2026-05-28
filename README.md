@@ -147,7 +147,9 @@ In **Supabase → Authentication → URL configuration**:
   - `https://jion-andal.github.io/rtodo`
   - `https://jion-andal.github.io/rtodo/**`
 
-Email confirmation, password reset, and group invite links use `VITE_APP_URL` (see `.env.production`). Mobile builds must include this value so links do not point at Capacitor’s `localhost` shell.
+In **Supabase → Authentication → Providers → Email**, turn off **Confirm email** so new accounts can sign in immediately after signup.
+
+Password reset and group invite links use `VITE_APP_URL` (see `.env.production`). Mobile builds must include this value so links do not point at Capacitor’s `localhost` shell.
 
 ### 4. Manual deploy
 

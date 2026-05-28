@@ -18,10 +18,6 @@ export interface SignUpInput {
   password: string
 }
 
-export interface SignUpResult {
-  needsEmailConfirmation: boolean
-}
-
 interface AuthContextValue {
   session: Session | null
   user: User | null
@@ -29,7 +25,7 @@ interface AuthContextValue {
   loading: boolean
   recoveryMode: boolean
   signIn: (username: string, password: string) => Promise<void>
-  signUp: (input: SignUpInput) => Promise<SignUpResult>
+  signUp: (input: SignUpInput) => Promise<void>
   requestPasswordReset: (username: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>
   updateUsername: (newUsername: string) => Promise<void>
@@ -132,9 +128,6 @@ function mapAuthError(message: string): string {
   if (lower.includes('duplicate key') || lower.includes('profiles_username_lower_idx')) {
     return 'Username is already taken.'
   }
-  if (lower.includes('email not confirmed')) {
-    return 'Please confirm your email before signing in.'
-  }
   if (lower.includes('invalid login credentials') || lower.includes('invalid credentials')) {
     return 'Invalid username or password.'
   }
@@ -146,9 +139,6 @@ function mapAuthError(message: string): string {
 
 function mapSignInError(message: string): string {
   const lower = message.toLowerCase()
-  if (lower.includes('email not confirmed')) {
-    return 'Please confirm your email before signing in.'
-  }
   if (lower.includes('invalid login credentials') || lower.includes('invalid credentials')) {
     return 'Invalid username or password.'
   }
@@ -255,7 +245,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw new Error(mapSignInError(error.message))
   }, [])
 
-  const signUp = useCallback(async (input: SignUpInput): Promise<SignUpResult> => {
+  const signUp = useCallback(async (input: SignUpInput): Promise<void> => {
     if (!supabase) throw new Error('Supabase is not configured.')
 
     const email = input.email.trim()
@@ -276,7 +266,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: getAuthRedirectUrl(),
         data: {
           username: usernameValue,
         },
@@ -285,14 +274,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) throw new Error(mapAuthError(error.message))
     if (!data.user) throw new Error('Sign up failed. Please try again.')
-
-    if (data.session) {
-      setSession(data.session)
-      await loadProfile(data.user)
-      return { needsEmailConfirmation: false }
+    if (!data.session) {
+      throw new Error('Sign up failed. Please try again or contact support.')
     }
 
-    return { needsEmailConfirmation: true }
+    setSession(data.session)
+    await loadProfile(data.user)
   }, [loadProfile])
 
   const requestPasswordReset = useCallback(async (usernameInput: string) => {
