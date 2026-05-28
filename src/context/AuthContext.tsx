@@ -122,7 +122,7 @@ async function resolveEmailForUsername(username: string): Promise<string | null>
 
 function mapAuthError(message: string): string {
   const lower = message.toLowerCase()
-  if (lower.includes('already registered') || lower.includes('already been registered')) {
+  if (lower.includes('already registered') || lower.includes('already been registered') || lower.includes('email address is already')) {
     return 'Email is already registered.'
   }
   if (lower.includes('duplicate key') || lower.includes('profiles_username_lower_idx')) {
@@ -143,6 +143,10 @@ function mapSignInError(message: string): string {
     return 'Invalid username or password.'
   }
   return mapAuthError(message)
+}
+
+function isDuplicateEmailSignUp(user: User): boolean {
+  return user.identities !== undefined && user.identities.length === 0
 }
 
 function isRecoveryAuthEvent(event: AuthChangeEvent): boolean {
@@ -248,7 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = useCallback(async (input: SignUpInput): Promise<void> => {
     if (!supabase) throw new Error('Supabase is not configured.')
 
-    const email = input.email.trim()
+    const email = input.email.trim().toLowerCase()
     const usernameValue = input.username.trim()
     const password = input.password
 
@@ -274,6 +278,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) throw new Error(mapAuthError(error.message))
     if (!data.user) throw new Error('Sign up failed. Please try again.')
+    if (isDuplicateEmailSignUp(data.user)) {
+      throw new Error('Email is already registered.')
+    }
     if (!data.session) {
       throw new Error('Sign up failed. Please try again or contact support.')
     }
