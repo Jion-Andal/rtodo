@@ -14,15 +14,15 @@ export function RemoteChangesBanner() {
   return (
     <div
       role="status"
-      className="border-b border-mint-300 bg-mint-100 px-4 py-3 dark:border-mint-500/40 dark:bg-mint-600/20"
+      className="border-b border-mint-200/80 bg-mint-50/90 px-4 py-3 backdrop-blur-sm dark:border-mint-500/20 dark:bg-mint-500/10"
     >
       <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
-        <p className="text-sm text-ink dark:text-mint-50">{message}</p>
+        <p className="text-sm text-ink dark:text-zinc-200">{message}</p>
         <button
           type="button"
           onClick={() => void refreshEntries()}
           disabled={refreshing}
-          className="shrink-0 rounded-lg bg-mint-500 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-mint-600 disabled:opacity-60 dark:bg-mint-600 dark:hover:bg-mint-500"
+          className="shrink-0 rounded-md bg-mint-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-mint-500 disabled:opacity-60 dark:bg-mint-500 dark:hover:bg-mint-400"
         >
           {refreshing ? 'Refreshing…' : 'Refresh'}
         </button>

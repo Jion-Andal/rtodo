@@ -23,10 +23,10 @@ export function IconButton({
         onClick()
       }}
       aria-label={label}
-      className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${
+      className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
         variant === 'danger'
-          ? 'text-ink-faint hover:bg-peach-100 hover:text-peach-400 dark:hover:bg-peach-400/10 dark:hover:text-peach-300'
-          : 'text-ink-faint hover:bg-mint-100 hover:text-mint-600 dark:hover:bg-mint-600/20 dark:hover:text-mint-300'
+          ? 'text-ink-faint hover:bg-peach-50 hover:text-peach-400 dark:hover:bg-peach-400/10 dark:hover:text-peach-300'
+          : 'text-ink-faint hover:bg-surface-muted hover:text-ink dark:hover:bg-dark-panel dark:hover:text-zinc-200'
       }`}
     >
       {children}

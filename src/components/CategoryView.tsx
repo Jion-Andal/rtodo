@@ -7,6 +7,7 @@ const ADD_EASTER_EGG_MESSAGES = [
   'Still thinking e?',
   'Take your time',
   'I can do this all day',
+  'Dit me may',
 ] as const
 import { useAuth } from '../context/AuthContext'
 import { useEntries } from '../context/EntriesContext'
@@ -119,7 +120,7 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
         ]
       setAddEasterEggMessage(message)
       if (addEasterEggTimer.current) clearTimeout(addEasterEggTimer.current)
-      addEasterEggTimer.current = setTimeout(() => dismissAddEasterEgg(), 2500)
+      addEasterEggTimer.current = setTimeout(() => dismissAddEasterEgg(), 3200)
     }, ADD_LONG_PRESS_MS)
   }
 
@@ -176,18 +177,14 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
       <div className="mb-4">
         {username && (
           <div className="mb-2 flex items-center justify-between gap-2">
-            <p className="text-base font-medium text-mint-600 dark:text-mint-300">
-              Hi, <span className="font-semibold">{username}</span>!
+            <p className="text-sm text-ink-muted dark:text-zinc-400">
+              Hi, <span className="font-medium text-ink dark:text-zinc-100">{username}</span>
             </p>
             {activeGroupId && (
               <button
                 type="button"
                 onClick={() => setShowMembersModal(true)}
-                className={`inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-colors ${
-                  showCompleted
-                    ? 'bg-lavender-200/70 text-ink hover:bg-lavender-300/70 dark:bg-lavender-500/25 dark:text-lavender-100 dark:hover:bg-lavender-500/35'
-                    : 'bg-mint-100 text-ink-muted hover:bg-mint-200 dark:bg-mint-600/25 dark:text-mint-200 dark:hover:bg-mint-600/35'
-                }`}
+                className="chip"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -204,23 +201,17 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
           </div>
         )}
 
-        <h2 className="text-lg font-semibold text-ink dark:text-mint-50">
+        <h2 className="section-title">
           {CATEGORY_LABELS[category]}
         </h2>
 
-        <p className="mt-1 text-xs text-ink-muted dark:text-ink-faint">
+        <p className="section-meta">
           {showCompleted ? 'Completed items' : 'Active items'} · {entries.length}
         </p>
       </div>
 
       {entries.length === 0 ? (
-        <div
-          className={`rounded-2xl border border-dashed px-6 py-12 text-center transition-colors ${
-            showCompleted
-              ? 'border-border-strong bg-lavender-100/50 dark:border-lavender-500/20 dark:bg-lavender-500/10'
-              : 'border-border dark:border-border-strong'
-          }`}
-        >
+        <div className="panel-inset px-6 py-12 text-center">
           <p className="text-sm text-ink-muted dark:text-ink-faint">
             {showCompleted
               ? `No completed ${CATEGORY_LABELS[category].toLowerCase()} yet.`
@@ -228,7 +219,7 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
           </p>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2.5">
           {entries.map((entry) => (
             <li key={entry.id}>
               <ItemCard
@@ -306,10 +297,8 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
         <button
           type="button"
           onClick={onToggleCompleted}
-          className={`pointer-events-auto flex h-14 items-center justify-center rounded-full px-4 text-sm font-medium shadow-lg transition-transform active:scale-95 ${
-            showCompleted
-              ? 'bg-lavender-400 text-white ring-4 ring-lavender-100/80 hover:bg-lavender-500 dark:bg-lavender-500 dark:ring-lavender-500/20 dark:hover:bg-lavender-400'
-              : 'border border-lavender-300/80 bg-lavender-100 text-ink ring-4 ring-mint-50/80 hover:bg-lavender-200 dark:border-lavender-500/40 dark:bg-lavender-500/25 dark:text-lavender-100 dark:ring-[#1e2830]/80 dark:hover:bg-lavender-500/35'
+          className={`pointer-events-auto flex h-12 items-center justify-center px-5 text-sm ${
+            showCompleted ? 'btn-primary' : 'btn-secondary'
           }`}
         >
           {showCompleted ? 'Active Items' : 'Completed Items'}
@@ -325,7 +314,7 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
             onPointerCancel={handleAddPointerUp}
             onContextMenu={(e) => e.preventDefault()}
             aria-label={`Add ${CATEGORY_SINGULAR[category]}`}
-            className="pointer-events-auto flex h-14 w-14 touch-manipulation select-none items-center justify-center rounded-full bg-mint-400 text-white shadow-lg ring-4 ring-mint-50/80 transition-transform hover:bg-mint-500 active:scale-95 dark:bg-mint-500 dark:ring-[#1e2830]/80 dark:hover:bg-mint-600"
+            className="btn-fab pointer-events-auto h-14 w-14 touch-manipulation select-none"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -346,11 +335,15 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
 
       {addEasterEggMessage && (
         <div
-          className="pointer-events-auto fixed inset-0 z-40 flex items-center justify-center"
+          className="pointer-events-auto fixed inset-0 z-40 flex items-center justify-center px-6"
           onClick={dismissAddEasterEgg}
           role="presentation"
         >
-          <p className="select-none text-xl font-medium tracking-wide text-ink/35 dark:text-mint-100/35">
+          <div className="easter-egg-backdrop absolute inset-0" aria-hidden="true" />
+          <p
+            role="status"
+            className="animate-easter-egg-fade-in panel relative z-10 select-none px-8 py-5 text-center text-2xl font-bold tracking-tight text-ink dark:text-zinc-100 sm:text-3xl"
+          >
             {addEasterEggMessage}
           </p>
         </div>

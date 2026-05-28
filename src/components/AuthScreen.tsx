@@ -5,8 +5,7 @@ import { isSupabaseConfigured } from '../lib/supabase'
 
 type AuthMode = 'signin' | 'signup' | 'forgot'
 
-const inputClassName =
-  'w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-base text-ink outline-none transition-colors focus:border-mint-400 dark:border-border-strong dark:bg-[#1a2428] dark:text-mint-50 dark:focus:border-mint-500'
+const inputClassName = 'field-input'
 
 export function AuthScreen() {
   const { signIn, signUp, requestPasswordReset } = useAuth()
@@ -20,9 +19,9 @@ export function AuthScreen() {
 
   if (!isSupabaseConfigured) {
     return (
-      <div className="flex min-h-full items-center justify-center bg-mint-50 px-4 dark:bg-[#1e2830]">
-        <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-sm dark:border-border-strong dark:bg-[#243038]">
-          <h1 className="text-lg font-bold text-mint-600 dark:text-mint-300">
+      <div className="app-shell flex min-h-full items-center justify-center px-4">
+        <div className="panel w-full max-w-sm p-6">
+          <h1 className="text-lg font-semibold text-ink dark:text-zinc-100">
             Supabase setup required
           </h1>
           <p className="mt-3 text-sm text-ink-muted">
@@ -99,17 +98,17 @@ export function AuthScreen() {
         : 'Enter your username to receive a reset link'
 
   return (
-    <div className="flex min-h-full items-center justify-center bg-mint-50 px-4 dark:bg-[#1e2830]">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-sm dark:border-border-strong dark:bg-[#243038]">
+    <div className="app-shell flex min-h-full items-center justify-center px-4">
+      <div className="panel w-full max-w-sm p-6">
         <div className="mb-6 flex items-center gap-2.5">
           <img
             src={FAVICON_URL}
             alt=""
-            className="h-10 w-10 rounded-lg shadow-sm"
+            className="h-9 w-9 rounded-md"
             aria-hidden="true"
           />
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-mint-600 dark:text-mint-300">
+            <h1 className="text-lg font-semibold tracking-tight text-ink dark:text-zinc-100">
               RTodo
             </h1>
             <p className="text-sm text-ink-muted">{subtitle}</p>
@@ -117,14 +116,14 @@ export function AuthScreen() {
         </div>
 
         {mode !== 'forgot' && (
-          <div className="mb-4 flex rounded-xl bg-mint-50 p-1 dark:bg-[#1a2428]">
+          <div className="mb-4 flex rounded-md border border-border bg-surface-muted p-0.5 dark:border-dark-border dark:bg-dark-panel">
             <button
               type="button"
               onClick={() => switchMode('signin')}
-              className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`flex-1 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors ${
                 mode === 'signin'
-                  ? 'bg-surface text-mint-600 shadow-sm dark:bg-[#243038] dark:text-mint-300'
-                  : 'text-ink-muted hover:text-ink'
+                  ? 'bg-surface text-ink shadow-sm dark:bg-dark-elevated dark:text-zinc-100'
+                  : 'text-ink-muted hover:text-ink dark:text-zinc-500'
               }`}
             >
               Sign in
@@ -132,10 +131,10 @@ export function AuthScreen() {
             <button
               type="button"
               onClick={() => switchMode('signup')}
-              className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`flex-1 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors ${
                 mode === 'signup'
-                  ? 'bg-surface text-mint-600 shadow-sm dark:bg-[#243038] dark:text-mint-300'
-                  : 'text-ink-muted hover:text-ink'
+                  ? 'bg-surface text-ink shadow-sm dark:bg-dark-elevated dark:text-zinc-100'
+                  : 'text-ink-muted hover:text-ink dark:text-zinc-500'
               }`}
             >
               Sign up
@@ -164,7 +163,7 @@ export function AuthScreen() {
                 <button
                   type="button"
                   onClick={() => switchMode('forgot')}
-                  className="text-xs font-medium text-mint-600 hover:text-mint-700 dark:text-mint-300 dark:hover:text-mint-200"
+                  className="text-xs font-medium text-mint-600 hover:text-mint-500 dark:text-mint-400 dark:hover:text-mint-300"
                 >
                   Forgot password?
                 </button>
@@ -191,7 +190,7 @@ export function AuthScreen() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-mint-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-600 disabled:opacity-60 dark:bg-mint-600 dark:hover:bg-mint-500"
+              className="btn-primary w-full"
             >
               {loading ? 'Please wait…' : 'Sign in'}
             </button>
@@ -246,7 +245,7 @@ export function AuthScreen() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-mint-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-600 disabled:opacity-60 dark:bg-mint-600 dark:hover:bg-mint-500"
+              className="btn-primary w-full"
             >
               {loading ? 'Please wait…' : 'Create account'}
             </button>
@@ -284,7 +283,7 @@ export function AuthScreen() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-mint-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-600 disabled:opacity-60 dark:bg-mint-600 dark:hover:bg-mint-500"
+              className="btn-primary w-full"
             >
               {loading ? 'Please wait…' : 'Send reset link'}
             </button>

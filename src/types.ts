@@ -7,6 +7,7 @@ export interface BaseEntry {
   title: string
   completed: boolean
   createdAt: string
+  createdBy?: string
 }
 
 export interface ChecklistItem {

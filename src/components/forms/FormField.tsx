@@ -7,7 +7,7 @@ interface FormFieldProps {
 export function FormField({ label, children, optional }: FormFieldProps) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-ink dark:text-mint-100">
+      <span className="mb-1.5 block text-sm font-medium text-ink dark:text-zinc-200">
         {label}
         {optional && (
           <span className="ml-1 font-normal text-ink-faint">(optional)</span>
@@ -18,8 +18,7 @@ export function FormField({ label, children, optional }: FormFieldProps) {
   )
 }
 
-export const inputClassName =
-  'w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-base text-ink outline-none transition-colors focus:border-mint-400 focus:ring-2 focus:ring-mint-300/40 dark:border-border-strong dark:bg-[#2a363e] dark:text-mint-50'
+export const inputClassName = 'field-input'
 
 export const selectClassName = `${inputClassName} appearance-none pr-10`
 
@@ -46,8 +45,6 @@ export function Select({ className = '', ...props }: SelectProps) {
   )
 }
 
-export const buttonPrimaryClassName =
-  'w-full rounded-xl bg-mint-400 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-mint-500 dark:hover:bg-mint-600'
+export const buttonPrimaryClassName = 'btn-primary w-full'
 
-export const buttonSecondaryClassName =
-  'rounded-xl border border-border px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-mint-50 dark:border-border-strong dark:text-mint-200 dark:hover:bg-[#2a363e]'
+export const buttonSecondaryClassName = 'btn-secondary'

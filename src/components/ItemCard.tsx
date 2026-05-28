@@ -33,11 +33,24 @@ function formatCreatedAt(isoStr: string) {
   })
 }
 
-function CreatedDate({ createdAt }: { createdAt: string }) {
+function EntryCreatedMeta({
+  createdAt,
+  createdBy,
+}: {
+  createdAt: string
+  createdBy?: string
+}) {
   return (
-    <p className="text-[11px] text-ink-faint">
-      Created: {formatCreatedAt(createdAt)}
-    </p>
+    <div className="space-y-0.5">
+      <p className="text-[11px] text-ink-faint">
+        Created: {formatCreatedAt(createdAt)}
+      </p>
+      {createdBy && (
+        <p className="text-[11px] text-ink-faint">
+          Created by: {createdBy}
+        </p>
+      )}
+    </div>
   )
 }
 
@@ -65,7 +78,7 @@ function ExpenseDetails({
         {entry.items.map((item) => (
           <li
             key={item.id}
-            className="flex items-baseline justify-between gap-2 text-xs text-ink-muted dark:text-mint-100"
+            className="flex items-baseline justify-between gap-2 text-xs text-ink-muted dark:text-zinc-400"
           >
             <span className="min-w-0 truncate">{item.description}</span>
             <span className="shrink-0 font-medium">
@@ -105,11 +118,9 @@ export function ItemCard({
   return (
     <article
       onClick={isClickableChecklist ? handleCardClick : undefined}
-      className={`rounded-xl border bg-surface p-3 shadow-sm transition-opacity dark:bg-[#2a363e] ${
-        entry.completed
-          ? 'border-border opacity-70 dark:border-border-strong'
-          : 'border-border dark:border-border-strong'
-      } ${isClickableChecklist ? 'cursor-pointer hover:border-mint-300 hover:shadow-md dark:hover:border-mint-500/50' : ''}`}
+      className={`panel p-3.5 transition-all duration-200 ${
+        entry.completed ? 'opacity-55' : ''
+      } ${isClickableChecklist ? 'panel-interactive cursor-pointer' : ''}`}
     >
       <div className="flex items-start gap-2.5">
         {showCheckbox ? (
@@ -120,10 +131,10 @@ export function ItemCard({
               onCheckboxClick(entry)
             }}
             aria-label={entry.completed ? 'Mark as active' : 'Mark as completed'}
-            className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 shadow-sm transition-all ${
+            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all duration-200 ${
               entry.completed
-                ? 'border-mint-500 bg-mint-400 text-white ring-2 ring-mint-300/40'
-                : 'border-mint-300 bg-mint-50 hover:border-mint-400 hover:bg-mint-100 hover:ring-2 hover:ring-mint-200/50 dark:border-mint-500/60 dark:bg-mint-600/20 dark:hover:border-mint-400 dark:hover:bg-mint-600/30'
+                ? 'border-mint-500 bg-mint-500 text-white dark:border-mint-400 dark:bg-mint-400'
+                : 'border-border-strong bg-surface hover:border-mint-400 dark:border-dark-border dark:bg-dark-elevated dark:hover:border-mint-500'
             }`}
           >
             {entry.completed && (
@@ -139,7 +150,7 @@ export function ItemCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
             <h3
-              className={`min-w-0 flex-1 truncate text-sm font-semibold text-ink dark:text-mint-50 ${
+              className={`min-w-0 flex-1 truncate text-sm font-medium text-ink dark:text-zinc-100 ${
                 entry.completed ? 'line-through' : ''
               }`}
             >
@@ -166,7 +177,10 @@ export function ItemCard({
             </div>
           </div>
 
-          <CreatedDate createdAt={entry.createdAt} />
+          <EntryCreatedMeta
+            createdAt={entry.createdAt}
+            createdBy={entry.createdBy}
+          />
 
           {entry.category === 'checklist' && (
             <div className="mt-1 space-y-0.5">
@@ -177,7 +191,7 @@ export function ItemCard({
               )}
               <ul className="space-y-1">
                 {entry.items.map((item) => (
-                  <li key={item.id} className="text-xs text-ink-muted dark:text-mint-100">
+                  <li key={item.id} className="text-xs text-ink-muted dark:text-zinc-400">
                     <div className="flex items-center gap-1.5">
                       <span
                         className={`h-1 w-1 shrink-0 rounded-full ${
@@ -201,14 +215,14 @@ export function ItemCard({
                   Due: {formatDate(entry.dueDate)}
                 </p>
               )}
-              <p className="line-clamp-2 text-xs text-ink-muted dark:text-mint-100">
+              <p className="line-clamp-2 text-xs text-ink-muted dark:text-zinc-400">
                 {entry.description}
               </p>
             </div>
           )}
 
           {entry.category === 'events' && (
-            <div className="mt-1 text-xs text-ink-muted dark:text-mint-100">
+            <div className="mt-1 text-xs text-ink-muted dark:text-zinc-400">
               <p>{formatDate(entry.date)}</p>
               {entry.repeat === 'once' && entry.repeatOn && (
                 <p className="text-[11px] text-peach-400 dark:text-peach-300">

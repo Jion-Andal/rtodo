@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Modal } from './Modal'
+import { inputClassName, buttonPrimaryClassName, buttonSecondaryClassName } from './forms/FormField'
 import { useGroups } from '../context/GroupsContext'
 import { copyTextToClipboard } from '../utils/clipboard'
 import { getErrorMessage } from '../utils/errorMessage'
@@ -69,21 +70,21 @@ export function CreateGroupModal({ open, onClose }: CreateGroupModalProps) {
           <p className="text-sm text-ink-muted dark:text-ink-faint">
             Share this link so others can join and share entries with you.
           </p>
-          <div className="rounded-xl border border-border bg-mint-50/80 p-3 text-xs break-all text-ink dark:border-border-strong dark:bg-mint-600/10 dark:text-mint-100">
+          <div className="panel-inset p-3 text-xs break-all text-ink dark:text-zinc-300">
             {inviteUrl}
           </div>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => void handleCopy()}
-              className="flex-1 rounded-xl bg-mint-400 px-4 py-2.5 text-sm font-medium text-white hover:bg-mint-500 dark:bg-mint-500 dark:hover:bg-mint-600"
+              className="btn-primary flex-1"
             >
               {copied ? 'Copied!' : 'Copy link'}
             </button>
             <button
               type="button"
               onClick={handleClose}
-              className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-ink hover:bg-mint-100 dark:border-border-strong dark:text-mint-100 dark:hover:bg-mint-600/20"
+              className={buttonSecondaryClassName}
             >
               Done
             </button>
@@ -92,7 +93,7 @@ export function CreateGroupModal({ open, onClose }: CreateGroupModalProps) {
       ) : (
         <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
           <div>
-            <label htmlFor="group-name" className="mb-1 block text-sm font-medium text-ink dark:text-mint-100">
+            <label htmlFor="group-name" className="mb-1 block text-sm font-medium text-ink dark:text-zinc-200">
               Group name
             </label>
             <input
@@ -103,7 +104,7 @@ export function CreateGroupModal({ open, onClose }: CreateGroupModalProps) {
               placeholder="e.g. Roommates"
               maxLength={80}
               autoFocus
-              className="w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-base text-ink outline-none focus:border-mint-400 dark:border-border-strong dark:bg-[#243038] dark:text-mint-50"
+              className={inputClassName}
             />
             <p className="mt-1 text-xs text-ink-muted dark:text-ink-faint">
               Must be unique among your groups.
@@ -119,7 +120,7 @@ export function CreateGroupModal({ open, onClose }: CreateGroupModalProps) {
           <button
             type="submit"
             disabled={creating}
-            className="w-full rounded-xl bg-mint-400 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-mint-500 disabled:opacity-60 dark:bg-mint-500 dark:hover:bg-mint-600"
+            className={buttonPrimaryClassName}
           >
             {creating ? 'Creating…' : 'Create group'}
           </button>

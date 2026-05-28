@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
 import { useEntries } from '../../context/EntriesContext'
 import type { ChecklistEntry } from '../../types'
+import { preserveEntryMeta } from '../../utils/entryMeta'
 import {
   FormField,
   inputClassName,
@@ -26,6 +28,7 @@ interface ChecklistFormProps {
 }
 
 export function ChecklistForm({ entry, onSuccess }: ChecklistFormProps) {
+  const { username } = useAuth()
   const { addEntry, updateEntry } = useEntries()
   const [title, setTitle] = useState(entry?.title ?? '')
   const [dueDate, setDueDate] = useState(entry?.dueDate ?? '')
@@ -60,7 +63,7 @@ export function ChecklistForm({ entry, onSuccess }: ChecklistFormProps) {
         checked: entry?.items[index]?.checked ?? false,
       })),
       completed: entry?.completed ?? false,
-      createdAt: entry?.createdAt ?? new Date().toISOString(),
+      ...preserveEntryMeta(entry, username, Boolean(entry)),
     }
 
     if (entry) {
@@ -113,7 +116,7 @@ export function ChecklistForm({ entry, onSuccess }: ChecklistFormProps) {
                 type="text"
                 value={item.text}
                 onChange={(e) => updateItem(index, e.target.value)}
-                className={`${inputClassName} min-w-0 bg-surface dark:bg-[#2a363e]`}
+                className={`${inputClassName} min-w-0`}
                 placeholder={`Item ${index + 1}`}
               />
 

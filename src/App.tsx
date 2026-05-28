@@ -6,6 +6,7 @@ import { GroupsProvider, useGroups } from './context/GroupsContext'
 import { JoinGroupInviteModal } from './components/JoinGroupInviteModal'
 import { AuthScreen } from './components/AuthScreen'
 import { ResetPasswordScreen } from './components/ResetPasswordScreen'
+import { SettingsScreen } from './components/SettingsScreen'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { CategoryView } from './components/CategoryView'
@@ -34,7 +35,7 @@ function JoinGroupInviteGate() {
   )
 }
 
-function AppContent() {
+function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
   const [activeCategory, setActiveCategory] = useState<Category>('checklist')
   const [showCompleted, setShowCompleted] = useState(false)
   const { inAppAlerts, dismissInAppAlerts } = useDueDateNotifications()
@@ -42,13 +43,9 @@ function AppContent() {
   return (
     <>
       <div
-        className={`flex min-h-full flex-col transition-colors duration-200 ${
-          showCompleted
-            ? 'bg-cream-dark text-ink dark:bg-[#1a2428] dark:text-mint-50'
-            : 'bg-mint-50 text-ink dark:bg-[#1e2830] dark:text-mint-50'
-        }`}
+        className={`flex min-h-full flex-col ${showCompleted ? 'app-shell-completed' : 'app-shell'}`}
       >
-        <Header showCompleted={showCompleted} />
+        <Header showCompleted={showCompleted} onOpenSettings={onOpenSettings} />
         <RemoteChangesBanner />
 
         <main className="mx-auto w-full max-w-lg flex-1 overflow-y-auto pb-[calc(6rem+env(safe-area-inset-bottom,0px))] pt-4">
@@ -74,10 +71,11 @@ function AppContent() {
 
 function AuthenticatedApp() {
   const { session, loading, recoveryMode } = useAuth()
+  const [showSettings, setShowSettings] = useState(false)
 
   if (loading) {
     return (
-      <div className="flex min-h-full items-center justify-center bg-mint-50 dark:bg-[#1e2830]">
+      <div className="app-shell flex min-h-full items-center justify-center">
         <p className="text-sm text-ink-muted">Loading…</p>
       </div>
     )
@@ -91,10 +89,14 @@ function AuthenticatedApp() {
     return <AuthScreen />
   }
 
+  if (showSettings) {
+    return <SettingsScreen onBack={() => setShowSettings(false)} />
+  }
+
   return (
     <GroupsProvider>
       <EntriesProvider>
-        <AppContent />
+        <AppContent onOpenSettings={() => setShowSettings(true)} />
       </EntriesProvider>
     </GroupsProvider>
   )

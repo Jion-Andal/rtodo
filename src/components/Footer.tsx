@@ -18,14 +18,8 @@ interface FooterProps {
 
 export function Footer({ activeCategory, onCategoryChange, showCompleted = false }: FooterProps) {
   return (
-    <footer
-      className={`fixed bottom-0 left-0 right-0 z-20 border-t backdrop-blur transition-colors duration-200 ${
-        showCompleted
-          ? 'border-border-strong bg-cream-dark/95 dark:border-lavender-500/20 dark:bg-[#1e2830]/95'
-          : 'border-border bg-surface/95 dark:border-border-strong dark:bg-[#243038]/95'
-      }`}
-    >
-      <nav className="mx-auto flex max-w-lg items-stretch justify-around px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
+    <footer className={`chrome-bottom ${showCompleted ? 'chrome-completed' : ''}`}>
+      <nav className="mx-auto flex max-w-lg items-stretch gap-1 px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
         {CATEGORIES.map((category) => {
           const isActive = activeCategory === category
           return (
@@ -33,19 +27,15 @@ export function Footer({ activeCategory, onCategoryChange, showCompleted = false
               key={category}
               type="button"
               onClick={() => onCategoryChange(category)}
-              className={`flex flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-2 text-xs font-medium transition-colors ${
-                isActive
-                  ? 'text-mint-600 dark:text-mint-300'
-                  : 'text-ink-muted hover:text-ink dark:text-ink-faint dark:hover:text-mint-100'
-              }`}
+              className={`nav-pill ${isActive ? 'nav-pill-active' : 'nav-pill-inactive'}`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth={1.5}
+                strokeWidth={isActive ? 2.25 : 1.75}
                 stroke="currentColor"
-                className={`h-6 w-6 ${isActive ? 'stroke-2' : ''}`}
+                className="h-5 w-5"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d={ICONS[category]} />
               </svg>

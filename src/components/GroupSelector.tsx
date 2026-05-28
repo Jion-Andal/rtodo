@@ -11,7 +11,7 @@ interface GroupSelectorProps {
 
 type ConfirmAction = 'delete' | 'leave'
 
-export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
+export function GroupSelector({ showCompleted: _showCompleted = false }: GroupSelectorProps) {
   const {
     groups,
     activeGroupId,
@@ -45,9 +45,7 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
     return () => document.removeEventListener('mousedown', handlePointerDown)
   }, [open])
 
-  const buttonClass = showCompleted
-    ? 'bg-lavender-200/60 text-ink hover:bg-lavender-300/60 dark:bg-lavender-500/20 dark:text-lavender-200 dark:hover:bg-lavender-500/30'
-    : 'bg-mint-100 text-ink-muted hover:bg-mint-200 dark:bg-mint-600/20 dark:text-mint-200 dark:hover:bg-mint-600/30'
+  const buttonClass = 'chip max-w-[7rem] sm:max-w-[8.5rem]'
 
   const label = joining ? 'Joining…' : loading ? '…' : activeGroupName
 
@@ -86,16 +84,18 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
 
   return (
     <>
-      <div ref={containerRef} className="relative">
+      <div ref={containerRef} className="relative min-w-0">
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
           aria-haspopup="listbox"
           aria-expanded={open}
+          aria-label={`Current group: ${label}`}
+          title={label}
           disabled={loading || joining}
-          className={`flex max-w-[9.5rem] items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-medium transition-colors sm:max-w-[11rem] ${buttonClass}`}
+          className={`flex min-w-0 items-center gap-1 ${buttonClass}`}
         >
-          <span className="truncate">{label}</span>
+          <span className="min-w-0 truncate">{label}</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
@@ -115,7 +115,7 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
           <div
             role="listbox"
             aria-label="Select group"
-            className="absolute right-0 top-full z-30 mt-1 min-w-[12rem] overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-lg dark:border-border-strong dark:bg-[#2a363e]"
+            className="absolute right-0 top-full z-30 mt-1 min-w-[12rem] overflow-hidden rounded-md border border-border bg-surface py-1 shadow-lg dark:border-dark-border dark:bg-dark-elevated"
           >
             <button
               type="button"
@@ -125,10 +125,10 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
                 void selectGroup(null)
                 setOpen(false)
               }}
-              className={`block w-full px-3 py-2 text-left text-xs transition-colors hover:bg-mint-100 dark:hover:bg-mint-600/20 ${
+              className={`block w-full px-3 py-2 text-left text-xs transition-colors hover:bg-surface-muted dark:hover:bg-dark-panel ${
                 activeGroupId === null
-                  ? 'font-semibold text-mint-600 dark:text-mint-300'
-                  : 'text-ink dark:text-mint-100'
+                  ? 'font-medium text-mint-600 dark:text-mint-400'
+                  : 'text-ink dark:text-zinc-300'
               }`}
             >
               {PERSONAL_GROUP_LABEL}
@@ -139,8 +139,8 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
                 key={group.id}
                 role="option"
                 aria-selected={activeGroupId === group.id}
-                className={`flex items-center gap-0.5 transition-colors hover:bg-mint-100 dark:hover:bg-mint-600/20 ${
-                  activeGroupId === group.id ? 'bg-mint-50/80 dark:bg-mint-600/10' : ''
+                className={`flex items-center gap-0.5 transition-colors hover:bg-surface-muted dark:hover:bg-dark-panel ${
+                  activeGroupId === group.id ? 'bg-surface-muted/80 dark:bg-dark-panel/80' : ''
                 }`}
               >
                 <button
@@ -151,8 +151,8 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
                   }}
                   className={`min-w-0 flex-1 truncate px-3 py-2 text-left text-xs ${
                     activeGroupId === group.id
-                      ? 'font-semibold text-mint-600 dark:text-mint-300'
-                      : 'text-ink dark:text-mint-100'
+                      ? 'font-medium text-mint-600 dark:text-mint-400'
+                      : 'text-ink dark:text-zinc-300'
                   }`}
                 >
                   {group.name}
@@ -165,7 +165,7 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
                       ? `Delete group ${group.name}`
                       : `Leave group ${group.name}`
                   }
-                  className="mr-1.5 shrink-0 rounded-lg p-1 text-ink-faint transition-colors hover:bg-lavender-200/80 hover:text-ink dark:hover:bg-lavender-500/25 dark:hover:text-lavender-100"
+                  className="mr-1.5 shrink-0 rounded-md p-1 text-ink-faint transition-colors hover:bg-surface-muted hover:text-ink dark:hover:bg-dark-panel dark:hover:text-zinc-200"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +180,7 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
               </div>
             ))}
 
-            <div className="my-1 border-t border-border dark:border-border-strong" />
+            <div className="my-1 border-t border-border dark:border-dark-border" />
 
             <button
               type="button"
@@ -188,7 +188,7 @@ export function GroupSelector({ showCompleted = false }: GroupSelectorProps) {
                 setOpen(false)
                 setShowCreateModal(true)
               }}
-              className="block w-full px-3 py-2 text-left text-xs font-medium text-mint-600 hover:bg-mint-100 dark:text-mint-300 dark:hover:bg-mint-600/20"
+              className="block w-full px-3 py-2 text-left text-xs font-medium text-mint-600 hover:bg-surface-muted dark:text-mint-400 dark:hover:bg-dark-panel"
             >
               Create group…
             </button>

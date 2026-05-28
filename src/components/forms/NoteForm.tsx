@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
 import { useEntries } from '../../context/EntriesContext'
 import type { NoteEntry } from '../../types'
+import { preserveEntryMeta } from '../../utils/entryMeta'
 import {
   FormField,
   inputClassName,
@@ -13,6 +15,7 @@ interface NoteFormProps {
 }
 
 export function NoteForm({ entry, onSuccess }: NoteFormProps) {
+  const { username } = useAuth()
   const { addEntry, updateEntry } = useEntries()
   const [title, setTitle] = useState(entry?.title ?? '')
   const [description, setDescription] = useState(entry?.description ?? '')
@@ -29,7 +32,7 @@ export function NoteForm({ entry, onSuccess }: NoteFormProps) {
       description: description.trim(),
       dueDate: dueDate || undefined,
       completed: entry?.completed ?? false,
-      createdAt: entry?.createdAt ?? new Date().toISOString(),
+      ...preserveEntryMeta(entry, username, Boolean(entry)),
     }
 
     if (entry) {

@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
 import { useEntries } from '../../context/EntriesContext'
 import type { EventEntry, RepeatOption } from '../../types'
+import { preserveEntryMeta } from '../../utils/entryMeta'
 import { REPEAT_LABELS } from '../../types'
 import {
   FormField,
@@ -15,6 +17,7 @@ interface EventFormProps {
 }
 
 export function EventForm({ entry, onSuccess }: EventFormProps) {
+  const { username } = useAuth()
   const { addEntry, updateEntry } = useEntries()
   const [title, setTitle] = useState(entry?.title ?? '')
   const [date, setDate] = useState(entry?.date ?? '')
@@ -40,7 +43,7 @@ export function EventForm({ entry, onSuccess }: EventFormProps) {
       repeat,
       repeatOn: repeat === 'once' && repeatOn ? repeatOn : undefined,
       completed: repeat === 'once' ? (entry?.completed ?? false) : false,
-      createdAt: entry?.createdAt ?? new Date().toISOString(),
+      ...preserveEntryMeta(entry, username, Boolean(entry)),
     }
 
     if (entry) {

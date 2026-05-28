@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { FAVICON_URL } from '../lib/assetUrl'
-
-const inputClassName =
-  'w-full rounded-xl border border-border bg-surface px-3 py-2 text-ink outline-none transition-colors focus:border-mint-400 dark:border-border-strong dark:bg-[#1a2428] dark:text-mint-50 dark:focus:border-mint-500'
+import { inputClassName, buttonPrimaryClassName } from './forms/FormField'
 
 export function ResetPasswordScreen() {
   const { updatePassword } = useAuth()
@@ -32,17 +30,17 @@ export function ResetPasswordScreen() {
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center bg-mint-50 px-4 dark:bg-[#1e2830]">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-sm dark:border-border-strong dark:bg-[#243038]">
+    <div className="app-shell flex min-h-full items-center justify-center px-4">
+      <div className="panel w-full max-w-sm p-6">
         <div className="mb-6 flex items-center gap-2.5">
           <img
             src={FAVICON_URL}
             alt=""
-            className="h-10 w-10 rounded-lg shadow-sm"
+            className="h-9 w-9 rounded-md"
             aria-hidden="true"
           />
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-mint-600 dark:text-mint-300">
+            <h1 className="text-lg font-semibold tracking-tight text-ink dark:text-zinc-100">
               Reset password
             </h1>
             <p className="text-sm text-ink-muted">Choose a new password for your account</p>
@@ -82,7 +80,7 @@ export function ResetPasswordScreen() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-mint-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-mint-600 disabled:opacity-60 dark:bg-mint-600 dark:hover:bg-mint-500"
+            className={buttonPrimaryClassName}
           >
             {loading ? 'Please wait…' : 'Update password'}
           </button>

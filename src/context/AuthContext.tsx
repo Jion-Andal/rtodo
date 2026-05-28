@@ -32,6 +32,8 @@ interface AuthContextValue {
   signUp: (input: SignUpInput) => Promise<SignUpResult>
   requestPasswordReset: (username: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>
+  updateUsername: (newUsername: string) => Promise<void>
+  deleteAccount: () => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -321,6 +323,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearAuthParamsFromUrl()
   }, [])
 
+  const updateUsername = useCallback(async (newUsername: string) => {
+    if (!supabase) throw new Error('Supabase is not configured.')
+
+    const user = session?.user
+    if (!user) throw new Error('Not signed in.')
+
+    const trimmed = newUsername.trim()
+    if (!trimmed) throw new Error('Username is required.')
+    if (trimmed.length < 3) throw new Error('Username must be at least 3 characters.')
+
+    if (trimmed.toLowerCase() === username?.toLowerCase()) {
+      return
+    }
+
+    const { data: existing } = await supabase
+      .from('profiles')
+      .select('id')
+      .ilike('username', trimmed)
+      .neq('id', user.id)
+      .maybeSingle()
+
+    if (existing) {
+      throw new Error('Username is already taken.')
+    }
+
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ username: trimmed, display_name: trimmed })
+      .eq('id', user.id)
+
+    if (profileError) throw new Error(mapAuthError(profileError.message))
+
+    const { error: authError } = await supabase.auth.updateUser({
+      data: { username: trimmed },
+    })
+    if (authError) throw new Error(mapAuthError(authError.message))
+
+    setUsername(trimmed)
+  }, [session, username])
+
   const signOut = useCallback(async () => {
     if (!supabase) return
     const { error } = await supabase.auth.signOut()
@@ -328,6 +370,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUsername(null)
     setRecoveryMode(false)
   }, [])
+
+  const deleteAccount = useCallback(async () => {
+    if (!supabase) throw new Error('Supabase is not configured.')
+
+    const { error } = await supabase.rpc('delete_my_account')
+    if (error) throw new Error(mapAuthError(error.message))
+
+    await signOut()
+  }, [signOut])
 
   const value = useMemo(
     () => ({
@@ -340,6 +391,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUp,
       requestPasswordReset,
       updatePassword,
+      updateUsername,
+      deleteAccount,
       signOut,
     }),
     [
@@ -351,6 +404,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUp,
       requestPasswordReset,
       updatePassword,
+      updateUsername,
+      deleteAccount,
       signOut,
     ],
   )

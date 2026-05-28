@@ -46,13 +46,13 @@ export function ChecklistItemsModal({ entryId, onClose }: ChecklistItemsModalPro
               <button
                 type="button"
                 onClick={() => toggleChecklistItem(entry.id, item.id)}
-                className="flex w-full items-center gap-3 rounded-xl border border-border bg-mint-50/80 px-3 py-2.5 text-left transition-colors hover:border-mint-300 hover:bg-mint-100/80 dark:border-border-strong dark:bg-[#243038]/80 dark:hover:border-mint-500/50 dark:hover:bg-mint-600/10"
+                className="panel flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:border-mint-300 dark:hover:border-mint-600/50"
               >
                 <span
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 shadow-sm transition-all ${
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors ${
                     item.checked
-                      ? 'border-mint-500 bg-mint-400 text-white ring-2 ring-mint-300/40'
-                      : 'border-mint-300 bg-mint-50 dark:border-mint-500/60 dark:bg-mint-600/20'
+                      ? 'border-mint-600 bg-mint-600 text-white dark:border-mint-500 dark:bg-mint-500'
+                      : 'border-border-strong bg-surface dark:border-dark-border dark:bg-dark-elevated'
                   }`}
                 >
                   {item.checked && (
@@ -72,7 +72,7 @@ export function ChecklistItemsModal({ entryId, onClose }: ChecklistItemsModalPro
                 </span>
                 <div className="min-w-0 flex-1">
                   <span
-                    className={`block text-sm text-ink dark:text-mint-50 ${
+                    className={`block text-sm text-ink dark:text-zinc-100 ${
                       item.checked ? 'line-through opacity-60' : ''
                     }`}
                   >

@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
 import { useEntries } from '../../context/EntriesContext'
 import type { ExpenseEntry } from '../../types'
+import { preserveEntryMeta } from '../../utils/entryMeta'
 import {
   FormField,
   inputClassName,
@@ -27,6 +29,7 @@ interface ExpenseFormProps {
 }
 
 export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
+  const { username } = useAuth()
   const { addEntry, updateEntry } = useEntries()
   const [title, setTitle] = useState(entry?.title ?? '')
   const [splitCount, setSplitCount] = useState(
@@ -80,7 +83,7 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
       })),
       splitCount: parsedSplitCount,
       completed: entry?.completed ?? false,
-      createdAt: entry?.createdAt ?? new Date().toISOString(),
+      ...preserveEntryMeta(entry, username, Boolean(entry)),
     }
 
     if (entry) {
@@ -113,13 +116,13 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
       </FormField>
 
       <div>
-        <span className="mb-1.5 block text-sm font-medium text-ink dark:text-mint-100">
+        <span className="mb-1.5 block text-sm font-medium text-ink dark:text-zinc-200">
           Description & amount
         </span>
 
-        <div className="overflow-hidden rounded-xl border border-border bg-mint-50/60 dark:border-border-strong dark:bg-[#243038]/60">
+        <div className="panel-inset overflow-hidden">
           <div
-            className={`grid gap-2 border-b border-border px-3 py-2 text-xs font-semibold uppercase tracking-wide text-ink-muted dark:border-border-strong dark:text-ink-faint ${
+            className={`grid gap-2 border-b border-border px-3 py-2 text-xs font-medium text-ink-muted dark:border-dark-border dark:text-zinc-500 ${
               lineItems.length > 1
                 ? 'grid-cols-[minmax(0,7fr)_minmax(0,3fr)_2rem]'
                 : 'grid-cols-[minmax(0,7fr)_minmax(0,3fr)]'
@@ -130,7 +133,7 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
             {lineItems.length > 1 && <span className="sr-only">Remove</span>}
           </div>
 
-          <div className="divide-y divide-border dark:divide-border-strong">
+          <div className="divide-y divide-border dark:divide-dark-border">
             {lineItems.map((item, index) => (
               <div
                 key={index}
@@ -146,7 +149,7 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
                   onChange={(e) =>
                     updateLineItem(index, 'description', e.target.value)
                   }
-                  className={`${inputClassName} min-w-0 bg-surface dark:bg-[#2a363e]`}
+                  className={`${inputClassName} min-w-0`}
                   placeholder="What was this for?"
                 />
 
@@ -162,7 +165,7 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
                     onChange={(e) =>
                       updateLineItem(index, 'amount', e.target.value)
                     }
-                    className={`${inputClassName} bg-surface pl-7 text-right tabular-nums dark:bg-[#2a363e]`}
+                    className={`${inputClassName} pl-7 text-right tabular-nums`}
                     placeholder="0.00"
                   />
                 </div>
@@ -215,7 +218,7 @@ export function ExpenseForm({ entry, onSuccess }: ExpenseFormProps) {
       </FormField>
 
       {draftSplit !== null && (
-        <div className="rounded-xl bg-sage-100 px-4 py-3 dark:bg-sage-500/10">
+        <div className="rounded-md border border-sage-300/40 bg-sage-100 px-4 py-3 dark:border-sage-500/20 dark:bg-sage-500/10">
           <p className="text-sm text-sage-500 dark:text-sage-300">
             Total:{' '}
             <span className="font-semibold">{formatCurrency(draftTotal)}</span>
