@@ -148,7 +148,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
   return (
     <div className="app-shell flex min-h-full flex-col">
       <header className="chrome">
-        <div className="mx-auto flex max-w-lg items-center gap-3 px-4 py-3">
+        <div className="content-shell flex items-center gap-3 py-3 lg:py-3.5">
           <button
             type="button"
             onClick={onBack}
@@ -169,8 +169,8 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6 pb-24">
-        <div className="space-y-2">
+      <main className="main-content pb-24 lg:max-w-3xl lg:pb-28 xl:max-w-4xl">
+        <div className="space-y-2 xl:grid xl:grid-cols-2 xl:gap-3 xl:space-y-0">
           <SettingsRow
             label="Change Username"
             description={username ? `Current: ${username}` : undefined}
@@ -188,7 +188,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
           />
         </div>
 
-        <div className="mt-8 space-y-2">
+        <div className="mt-8 space-y-2 xl:col-span-2">
           <p className="mb-2 px-1 text-xs font-medium text-ink-faint dark:text-zinc-500">
             Account
           </p>
@@ -212,7 +212,8 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
         )}
       </main>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] z-10 mx-auto flex max-w-lg justify-end px-4">
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] z-10 lg:bottom-6">
+        <div className="content-shell flex justify-end">
         <button
           type="button"
           onClick={toggleTheme}
@@ -229,6 +230,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
             </svg>
           )}
         </button>
+        </div>
       </div>
 
       <Modal

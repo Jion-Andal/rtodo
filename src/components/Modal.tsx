@@ -20,7 +20,7 @@ export function Modal({ open, onClose, title, children, decoration }: ModalProps
         className="modal-backdrop"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-lg">
+      <div className="relative z-10 w-full max-w-lg lg:max-w-xl xl:max-w-2xl">
         {decoration && (
           <div className="pointer-events-none absolute -top-[7.25rem] left-1/2 z-20 -translate-x-1/2">
             {decoration}

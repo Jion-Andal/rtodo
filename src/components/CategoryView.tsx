@@ -164,7 +164,7 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
 
   if (loading) {
     return (
-      <section className="px-4 pb-4">
+      <section>
         <p className="py-12 text-center text-sm text-ink-muted dark:text-ink-faint">
           Loading entries…
         </p>
@@ -173,10 +173,10 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
   }
 
   return (
-    <section className="px-4 pb-4">
-      <div className="mb-4">
+    <section>
+      <div className="mb-4 lg:mb-6">
         {username && (
-          <div className="mb-2 flex items-center justify-between gap-2">
+          <div className="mb-2 flex items-center justify-between gap-2 lg:mb-3">
             <p className="text-sm text-ink-muted dark:text-zinc-400">
               Hi, <span className="font-medium text-ink dark:text-zinc-100">{username}</span>
             </p>
@@ -201,13 +201,47 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
           </div>
         )}
 
-        <h2 className="section-title">
-          {CATEGORY_LABELS[category]}
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <div className="min-w-0">
+            <h2 className="section-title lg:text-xl">
+              {CATEGORY_LABELS[category]}
+            </h2>
 
-        <p className="section-meta">
-          {showCompleted ? 'Completed items' : 'Active items'} · {entries.length}
-        </p>
+            <p className="section-meta lg:text-sm">
+              {showCompleted ? 'Completed items' : 'Active items'} · {entries.length}
+            </p>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggleCompleted}
+              aria-pressed={showCompleted}
+              className={`btn-compact ${
+                showCompleted
+                  ? 'btn-primary'
+                  : 'border border-border/80 bg-surface/90 text-ink shadow-sm hover:border-border-strong hover:bg-surface dark:border-dark-border/80 dark:bg-dark-elevated/90 dark:text-zinc-200 dark:hover:bg-dark-elevated'
+              }`}
+            >
+              {showCompleted ? 'Show active' : 'Show history'}
+            </button>
+
+            {!showCompleted && (
+              <button
+                type="button"
+                onClick={handleAddClick}
+                onPointerDown={handleAddPointerDown}
+                onPointerUp={handleAddPointerUp}
+                onPointerLeave={handleAddPointerUp}
+                onPointerCancel={handleAddPointerUp}
+                onContextMenu={(e) => e.preventDefault()}
+                className="btn-compact btn-primary touch-manipulation select-none"
+              >
+                Add item
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {entries.length === 0 ? (
@@ -215,11 +249,11 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
           <p className="text-sm text-ink-muted dark:text-ink-faint">
             {showCompleted
               ? `No completed ${CATEGORY_LABELS[category].toLowerCase()} yet.`
-              : `No ${CATEGORY_LABELS[category].toLowerCase()} yet. Tap + to create one.`}
+              : `No ${CATEGORY_LABELS[category].toLowerCase()} yet. Use Add item to create one.`}
           </p>
         </div>
       ) : (
-        <ul className="space-y-2.5">
+        <ul className="entry-grid">
           {entries.map((entry) => (
             <li key={entry.id}>
               <ItemCard
@@ -292,46 +326,6 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteEntryTarget(null)}
       />
-
-      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(7rem+env(safe-area-inset-bottom,0px))] z-30 mx-auto flex max-w-lg justify-between px-5">
-        <button
-          type="button"
-          onClick={onToggleCompleted}
-          className={`pointer-events-auto flex h-12 items-center justify-center px-5 text-sm ${
-            showCompleted ? 'btn-primary' : 'btn-secondary'
-          }`}
-        >
-          {showCompleted ? 'Active Items' : 'Completed Items'}
-        </button>
-
-        {!showCompleted && (
-          <button
-            type="button"
-            onClick={handleAddClick}
-            onPointerDown={handleAddPointerDown}
-            onPointerUp={handleAddPointerUp}
-            onPointerLeave={handleAddPointerUp}
-            onPointerCancel={handleAddPointerUp}
-            onContextMenu={(e) => e.preventDefault()}
-            aria-label={`Add ${CATEGORY_SINGULAR[category]}`}
-            className="btn-fab pointer-events-auto h-14 w-14 touch-manipulation select-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="h-7 w-7"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        )}
-      </div>
 
       {addEasterEggMessage && (
         <div

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { EntriesProvider } from './context/EntriesContext'
@@ -9,6 +9,7 @@ import { ResetPasswordScreen } from './components/ResetPasswordScreen'
 import { SettingsScreen } from './components/SettingsScreen'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
+import { DesktopSidebar } from './components/DesktopSidebar'
 import { CategoryView } from './components/CategoryView'
 import { DueDateAlert } from './components/DueDateAlert'
 import { RemoteChangesBanner } from './components/RemoteChangesBanner'
@@ -35,32 +36,59 @@ function JoinGroupInviteGate() {
   )
 }
 
+const SIDEBAR_COLLAPSED_KEY = 'rtodo-sidebar-collapsed'
+
 function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
   const [activeCategory, setActiveCategory] = useState<Category>('checklist')
   const [showCompleted, setShowCompleted] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const { inAppAlerts, dismissInAppAlerts } = useDueDateNotifications()
+
+  useEffect(() => {
+    if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true') {
+      setSidebarCollapsed(true)
+    }
+  }, [])
+
+  const toggleSidebarCollapsed = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next))
+      return next
+    })
+  }
 
   return (
     <>
       <div
-        className={`flex min-h-full flex-col ${showCompleted ? 'app-shell-completed' : 'app-shell'}`}
+        className={`flex min-h-full ${showCompleted ? 'app-shell-completed' : 'app-shell'}`}
       >
-        <Header showCompleted={showCompleted} onOpenSettings={onOpenSettings} />
-        <RemoteChangesBanner />
-
-        <main className="mx-auto w-full max-w-lg flex-1 overflow-y-auto pb-[calc(6rem+env(safe-area-inset-bottom,0px))] pt-4">
-          <CategoryView
-            category={activeCategory}
-            showCompleted={showCompleted}
-            onToggleCompleted={() => setShowCompleted((prev) => !prev)}
-          />
-        </main>
-
-        <Footer
+        <DesktopSidebar
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
+          collapsed={sidebarCollapsed}
+          onToggleCollapsed={toggleSidebarCollapsed}
           showCompleted={showCompleted}
         />
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <Header showCompleted={showCompleted} onOpenSettings={onOpenSettings} />
+          <RemoteChangesBanner />
+
+          <main className="main-content">
+            <CategoryView
+              category={activeCategory}
+              showCompleted={showCompleted}
+              onToggleCompleted={() => setShowCompleted((prev) => !prev)}
+            />
+          </main>
+
+          <Footer
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+            showCompleted={showCompleted}
+          />
+        </div>
       </div>
 
       <DueDateAlert entries={inAppAlerts} onDismiss={dismissInAppAlerts} />

@@ -31,7 +31,7 @@ export function ResetPasswordScreen() {
 
   return (
     <div className="app-shell flex min-h-full items-center justify-center px-4">
-      <div className="panel w-full max-w-sm p-6">
+      <div className="panel w-full max-w-sm p-6 sm:max-w-md lg:p-8">
         <div className="mb-6 flex items-center gap-2.5">
           <img
             src={FAVICON_URL}

@@ -9,8 +9,8 @@ interface HeaderProps {
 export function Header({ showCompleted = false, onOpenSettings }: HeaderProps) {
   return (
     <header className={`chrome ${showCompleted ? 'chrome-completed' : ''}`}>
-      <div className="mx-auto flex max-w-lg items-center justify-between gap-2 px-4 py-3">
-        <div className="flex shrink-0 items-center gap-2.5">
+      <div className="content-shell flex items-center justify-between gap-3 py-3 lg:py-3.5">
+        <div className="flex min-w-0 shrink-0 items-center gap-2.5 lg:hidden">
           <img
             src={FAVICON_URL}
             alt=""
@@ -22,7 +22,7 @@ export function Header({ showCompleted = false, onOpenSettings }: HeaderProps) {
           </h1>
         </div>
 
-        <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex min-w-0 items-center gap-1.5 lg:ml-auto">
           <GroupSelector showCompleted={showCompleted} />
           <button
             type="button"

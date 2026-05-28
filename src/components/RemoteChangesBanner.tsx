@@ -16,7 +16,7 @@ export function RemoteChangesBanner() {
       role="status"
       className="border-b border-mint-200/80 bg-mint-50/90 px-4 py-3 backdrop-blur-sm dark:border-mint-500/20 dark:bg-mint-500/10"
     >
-      <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
+      <div className="content-shell flex items-center justify-between gap-3">
         <p className="text-sm text-ink dark:text-zinc-200">{message}</p>
         <button
           type="button"

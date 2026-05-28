@@ -103,6 +103,10 @@
     @apply rounded-xl border border-border/80 bg-surface/90 px-4 py-2.5 text-sm font-medium text-ink shadow-sm backdrop-blur-sm transition-all duration-200 hover:border-border-strong hover:bg-surface hover:shadow active:scale-[0.98] dark:border-dark-border/80 dark:bg-dark-elevated/90 dark:text-zinc-200 dark:hover:bg-dark-elevated;
   }
 
+  .btn-compact {
+    @apply shrink-0 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98];
+  }
+
   .btn-fab {
     @apply flex items-center justify-center rounded-2xl bg-mint-600 text-white shadow-[var(--shadow-fab)] transition-all duration-200 hover:bg-mint-500 hover:shadow-lg active:scale-95 dark:bg-mint-500 dark:hover:bg-mint-400;
   }
@@ -141,6 +145,26 @@
 
   .section-meta {
     @apply mt-0.5 text-xs font-medium text-ink-faint dark:text-zinc-500;
+  }
+
+  .content-shell {
+    @apply mx-auto w-full max-w-lg px-4 sm:max-w-xl sm:px-5 md:max-w-2xl lg:max-w-4xl lg:px-8 xl:max-w-5xl xl:px-10 2xl:max-w-6xl;
+  }
+
+  .main-content {
+    @apply mx-auto w-full max-w-lg flex-1 overflow-y-auto px-4 pt-4 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:max-w-xl sm:px-5 md:max-w-2xl lg:max-w-4xl lg:px-8 lg:pb-8 xl:max-w-5xl xl:px-10 2xl:max-w-6xl;
+  }
+
+  .desktop-sidebar {
+    @apply sticky top-0 hidden h-dvh shrink-0 flex-col overflow-hidden border-r border-border/70 bg-surface/75 backdrop-blur-xl backdrop-saturate-150 transition-[width] duration-300 ease-out dark:border-dark-border/70 dark:bg-dark-panel/75 lg:flex lg:w-60 xl:w-64;
+  }
+
+  .desktop-sidebar--collapsed {
+    @apply lg:w-[4.75rem] xl:w-[4.75rem];
+  }
+
+  .entry-grid {
+    @apply grid grid-cols-1 gap-2.5 lg:grid-cols-2 xl:gap-3 2xl:grid-cols-3;
   }
 }
 
