@@ -14,7 +14,8 @@ import { CategoryView } from './components/CategoryView'
 import { DueDateAlert } from './components/DueDateAlert'
 import { RemoteChangesBanner } from './components/RemoteChangesBanner'
 import { useDueDateNotifications } from './hooks/useDueDateNotifications'
-import type { Category } from './types'
+import { DashboardView } from './components/DashboardView'
+import type { AppView } from './types'
 
 function JoinGroupInviteGate() {
   const {
@@ -39,7 +40,7 @@ function JoinGroupInviteGate() {
 const SIDEBAR_COLLAPSED_KEY = 'rtodo-sidebar-collapsed'
 
 function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
-  const [activeCategory, setActiveCategory] = useState<Category>('checklist')
+  const [activeView, setActiveView] = useState<AppView>('dashboard')
   const [showCompleted, setShowCompleted] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [showEventCalendar, setShowEventCalendar] = useState(false)
@@ -47,13 +48,13 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
   const { inAppAlerts, dismissInAppAlerts } = useDueDateNotifications()
 
   useEffect(() => {
-    if (activeCategory !== 'events') {
+    if (activeView !== 'events') {
       setShowEventCalendar(false)
     }
-    if (activeCategory !== 'expenses') {
+    if (activeView !== 'expenses') {
       setShowExpenseCalculations(false)
     }
-  }, [activeCategory])
+  }, [activeView])
 
   useEffect(() => {
     if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true') {
@@ -75,8 +76,8 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
         className={`flex min-h-full ${showCompleted ? 'app-shell-completed' : 'app-shell'}`}
       >
         <DesktopSidebar
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
+          activeView={activeView}
+          onViewChange={setActiveView}
           collapsed={sidebarCollapsed}
           onToggleCollapsed={toggleSidebarCollapsed}
           showCompleted={showCompleted}
@@ -91,20 +92,24 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
           <RemoteChangesBanner />
 
           <main className="main-content">
-            <CategoryView
-              category={activeCategory}
-              showCompleted={showCompleted}
-              onToggleCompleted={() => setShowCompleted((prev) => !prev)}
-              showCalendarModal={showEventCalendar}
-              onShowCalendarModalChange={setShowEventCalendar}
-              showExpenseCalculationsModal={showExpenseCalculations}
-              onShowExpenseCalculationsModalChange={setShowExpenseCalculations}
-            />
+            {activeView === 'dashboard' ? (
+              <DashboardView />
+            ) : (
+              <CategoryView
+                category={activeView}
+                showCompleted={showCompleted}
+                onToggleCompleted={() => setShowCompleted((prev) => !prev)}
+                showCalendarModal={showEventCalendar}
+                onShowCalendarModalChange={setShowEventCalendar}
+                showExpenseCalculationsModal={showExpenseCalculations}
+                onShowExpenseCalculationsModalChange={setShowExpenseCalculations}
+              />
+            )}
           </main>
 
           <Footer
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
+            activeView={activeView}
+            onViewChange={setActiveView}
             showCompleted={showCompleted}
           />
         </div>

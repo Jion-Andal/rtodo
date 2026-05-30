@@ -1,5 +1,7 @@
 export type Category = 'checklist' | 'notes' | 'events' | 'expenses'
 
+export type AppView = 'dashboard' | Category
+
 export type RepeatOption = 'never' | 'once' | 'weekly' | 'monthly' | 'annually'
 
 export type EventColor = 'mint' | 'peach' | 'sage' | 'sky' | 'rose' | 'violet'

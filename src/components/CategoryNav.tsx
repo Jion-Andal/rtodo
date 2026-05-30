@@ -18,7 +18,7 @@ const BANKNOTES_ICON_PATH =
   'M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9.5v5.25A2.25 2.25 0 005.25 17h13.5A2.25 2.25 0 0021 14.75V9.5M12 3v6m0 0-3-3m3 3 3-3M3 9.5h18'
 
 interface CategoryNavProps {
-  activeCategory: Category
+  activeCategory: Category | null
   onCategoryChange: (category: Category) => void
   layout?: 'horizontal' | 'vertical'
   compact?: boolean

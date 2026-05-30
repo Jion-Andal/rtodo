@@ -1,10 +1,11 @@
 import { FAVICON_URL } from '../lib/assetUrl'
-import type { Category } from '../types'
+import type { AppView, Category } from '../types'
 import { CategoryNav } from './CategoryNav'
+import { DashboardNavButton } from './DashboardNavButton'
 
 interface DesktopSidebarProps {
-  activeCategory: Category
-  onCategoryChange: (category: Category) => void
+  activeView: AppView
+  onViewChange: (view: AppView) => void
   collapsed: boolean
   onToggleCollapsed: () => void
   showCompleted?: boolean
@@ -15,8 +16,8 @@ interface DesktopSidebarProps {
 }
 
 export function DesktopSidebar({
-  activeCategory,
-  onCategoryChange,
+  activeView,
+  onViewChange,
   collapsed,
   onToggleCollapsed,
   showCompleted = false,
@@ -25,6 +26,8 @@ export function DesktopSidebar({
   onViewExpenseCalculations,
   expenseCalculationsOpen = false,
 }: DesktopSidebarProps) {
+  const activeCategory: Category | null =
+    activeView === 'dashboard' ? null : activeView
   return (
     <aside
       className={`desktop-sidebar ${collapsed ? 'desktop-sidebar--collapsed' : ''} ${
@@ -72,17 +75,24 @@ export function DesktopSidebar({
         </button>
       </div>
 
-      <CategoryNav
-        layout="vertical"
-        compact={collapsed}
-        activeCategory={activeCategory}
-        onCategoryChange={onCategoryChange}
-        onViewEventCalendar={onViewEventCalendar}
-        eventCalendarOpen={eventCalendarOpen}
-        onViewExpenseCalculations={onViewExpenseCalculations}
-        expenseCalculationsOpen={expenseCalculationsOpen}
-        className={`flex-1 py-4 ${collapsed ? 'px-2' : 'px-3'}`}
-      />
+      <div className={`flex flex-1 flex-col ${collapsed ? 'px-2 py-4' : 'px-3 py-4'}`}>
+        <DashboardNavButton
+          compact={collapsed}
+          active={activeView === 'dashboard'}
+          onClick={() => onViewChange('dashboard')}
+        />
+        <CategoryNav
+          layout="vertical"
+          compact={collapsed}
+          activeCategory={activeCategory}
+          onCategoryChange={(category) => onViewChange(category)}
+          onViewEventCalendar={onViewEventCalendar}
+          eventCalendarOpen={eventCalendarOpen}
+          onViewExpenseCalculations={onViewExpenseCalculations}
+          expenseCalculationsOpen={expenseCalculationsOpen}
+          className="mt-1 flex-1"
+        />
+      </div>
     </aside>
   )
 }
