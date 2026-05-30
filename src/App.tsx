@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { EntriesProvider } from './context/EntriesContext'
@@ -38,6 +38,7 @@ function JoinGroupInviteGate() {
 }
 
 const SIDEBAR_COLLAPSED_KEY = 'rtodo-sidebar-collapsed'
+const DASHBOARD_EASTER_EGG_DURATION_MS = 2000
 
 function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
   const [activeView, setActiveView] = useState<AppView>('dashboard')
@@ -45,7 +46,30 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [showEventCalendar, setShowEventCalendar] = useState(false)
   const [showExpenseCalculations, setShowExpenseCalculations] = useState(false)
+  const [dashboardEasterEggActive, setDashboardEasterEggActive] = useState(false)
+  const dashboardEasterEggTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { inAppAlerts, dismissInAppAlerts } = useDueDateNotifications()
+
+  const handleDashboardEasterEgg = useCallback(() => {
+    setActiveView('dashboard')
+    setDashboardEasterEggActive(true)
+    if (dashboardEasterEggTimer.current) {
+      clearTimeout(dashboardEasterEggTimer.current)
+    }
+    dashboardEasterEggTimer.current = setTimeout(() => {
+      setDashboardEasterEggActive(false)
+      dashboardEasterEggTimer.current = null
+    }, DASHBOARD_EASTER_EGG_DURATION_MS)
+  }, [])
+
+  useEffect(
+    () => () => {
+      if (dashboardEasterEggTimer.current) {
+        clearTimeout(dashboardEasterEggTimer.current)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     if (activeView !== 'events') {
@@ -78,6 +102,7 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
         <DesktopSidebar
           activeView={activeView}
           onViewChange={setActiveView}
+          onDashboardEasterEgg={handleDashboardEasterEgg}
           collapsed={sidebarCollapsed}
           onToggleCollapsed={toggleSidebarCollapsed}
           showCompleted={showCompleted}
@@ -93,7 +118,7 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
 
           <main className="main-content">
             {activeView === 'dashboard' ? (
-              <DashboardView />
+              <DashboardView easterEggActive={dashboardEasterEggActive} />
             ) : (
               <CategoryView
                 category={activeView}
@@ -110,6 +135,7 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
           <Footer
             activeView={activeView}
             onViewChange={setActiveView}
+            onDashboardEasterEgg={handleDashboardEasterEgg}
             showCompleted={showCompleted}
           />
         </div>

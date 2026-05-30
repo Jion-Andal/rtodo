@@ -1,5 +1,8 @@
+import { useCallback, useEffect, useRef, type MouseEvent } from 'react'
 import type { AppView, Category } from '../types'
 import { CATEGORY_LABELS } from '../types'
+
+export const DASHBOARD_LONG_PRESS_MS = 3000
 
 export const DASHBOARD_ICON_PATH =
   'M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z'
@@ -20,6 +23,7 @@ const MOBILE_CATEGORIES: Category[] = ['checklist', 'notes', 'events', 'expenses
 interface DashboardNavButtonProps {
   active: boolean
   onClick: () => void
+  onEasterEgg?: () => void
   layout?: 'mobile-center' | 'desktop'
   compact?: boolean
 }
@@ -27,17 +31,63 @@ interface DashboardNavButtonProps {
 export function DashboardNavButton({
   active,
   onClick,
+  onEasterEgg,
   layout = 'desktop',
   compact = false,
 }: DashboardNavButtonProps) {
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const longPressFired = useRef(false)
+
+  const clearLongPress = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+  }, [])
+
+  useEffect(() => () => clearLongPress(), [clearLongPress])
+
+  const handlePointerDown = () => {
+    if (!onEasterEgg) return
+    clearLongPress()
+    longPressFired.current = false
+    longPressTimer.current = setTimeout(() => {
+      longPressFired.current = true
+      onEasterEgg()
+    }, DASHBOARD_LONG_PRESS_MS)
+  }
+
+  const handlePointerUp = () => {
+    clearLongPress()
+  }
+
+  const handleClick = () => {
+    if (longPressFired.current) {
+      longPressFired.current = false
+      return
+    }
+    onClick()
+  }
+
+  const longPressHandlers = onEasterEgg
+    ? {
+        onPointerDown: handlePointerDown,
+        onPointerUp: handlePointerUp,
+        onPointerLeave: handlePointerUp,
+        onPointerCancel: handlePointerUp,
+        onContextMenu: (event: MouseEvent) => event.preventDefault(),
+      }
+    : {}
+
   if (layout === 'mobile-center') {
     return (
       <button
         type="button"
-        onClick={onClick}
+        onClick={handleClick}
         aria-label="Dashboard"
         aria-current={active ? 'page' : undefined}
-        className="relative -mt-5 flex shrink-0 flex-col items-center"
+        className="relative -mt-5 flex shrink-0 touch-manipulation select-none flex-col items-center"
+        {...longPressHandlers}
       >
         <span
           className={`flex h-14 w-14 items-center justify-center rounded-full border-4 border-surface shadow-lg transition-all duration-200 dark:border-dark-panel ${
@@ -68,12 +118,13 @@ export function DashboardNavButton({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={handleClick}
       title={compact ? 'Dashboard' : undefined}
       aria-current={active ? 'page' : undefined}
-      className={`nav-pill ${
+      className={`nav-pill touch-manipulation select-none ${
         compact ? 'flex-none justify-center px-2 py-2.5' : 'flex-none flex-row justify-start px-3 py-2.5 text-sm'
       } ${active ? 'nav-pill-active' : 'nav-pill-inactive'}`}
+      {...longPressHandlers}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -94,6 +145,7 @@ export function DashboardNavButton({
 interface MobileFooterNavProps {
   activeView: AppView
   onViewChange: (view: AppView) => void
+  onDashboardEasterEgg?: () => void
 }
 
 function CategoryFooterButton({
@@ -128,7 +180,11 @@ function CategoryFooterButton({
   )
 }
 
-export function MobileFooterNav({ activeView, onViewChange }: MobileFooterNavProps) {
+export function MobileFooterNav({
+  activeView,
+  onViewChange,
+  onDashboardEasterEgg,
+}: MobileFooterNavProps) {
   const leftCategories = MOBILE_CATEGORIES.slice(0, 2)
   const rightCategories = MOBILE_CATEGORIES.slice(2)
 
@@ -151,6 +207,7 @@ export function MobileFooterNav({ activeView, onViewChange }: MobileFooterNavPro
           layout="mobile-center"
           active={activeView === 'dashboard'}
           onClick={() => onViewChange('dashboard')}
+          onEasterEgg={onDashboardEasterEgg}
         />
       </div>
 

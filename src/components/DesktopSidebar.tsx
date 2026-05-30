@@ -6,6 +6,7 @@ import { DashboardNavButton } from './DashboardNavButton'
 interface DesktopSidebarProps {
   activeView: AppView
   onViewChange: (view: AppView) => void
+  onDashboardEasterEgg?: () => void
   collapsed: boolean
   onToggleCollapsed: () => void
   showCompleted?: boolean
@@ -18,6 +19,7 @@ interface DesktopSidebarProps {
 export function DesktopSidebar({
   activeView,
   onViewChange,
+  onDashboardEasterEgg,
   collapsed,
   onToggleCollapsed,
   showCompleted = false,
@@ -80,6 +82,7 @@ export function DesktopSidebar({
           compact={collapsed}
           active={activeView === 'dashboard'}
           onClick={() => onViewChange('dashboard')}
+          onEasterEgg={onDashboardEasterEgg}
         />
         <CategoryNav
           layout="vertical"

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useEntries } from '../context/EntriesContext'
 import type { ChecklistEntry, EventEntry, ExpenseEntry, NoteEntry } from '../types'
@@ -41,6 +41,9 @@ const HELLO_GREETINGS = [
   'Privet',
   'Yassou',
 ] as const
+
+export const DASHBOARD_EASTER_EGG_MESSAGE = 'Y U no let go?'
+const GREETING_FADE_MS = 450
 
 function formatShortDate(dateStr: string) {
   return new Date(`${dateStr}T00:00:00`).toLocaleDateString(undefined, {
@@ -95,14 +98,56 @@ function DueSoonCard({ label, entry, emptyMessage }: DueSoonCardProps) {
   )
 }
 
-export function DashboardView() {
+export function DashboardView({ easterEggActive = false }: { easterEggActive?: boolean }) {
   const { username } = useAuth()
   const { entries, loading } = useEntries()
+  const [greetingMode, setGreetingMode] = useState<'normal' | 'easter-egg'>('normal')
+  const [greetingFadingOut, setGreetingFadingOut] = useState(false)
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const helloGreeting = useMemo(
     () => HELLO_GREETINGS[Math.floor(Math.random() * HELLO_GREETINGS.length)],
     [],
   )
+
+  useEffect(() => {
+    if (fadeTimerRef.current) {
+      clearTimeout(fadeTimerRef.current)
+      fadeTimerRef.current = null
+    }
+
+    if (easterEggActive) {
+      setGreetingFadingOut(false)
+      setGreetingMode('easter-egg')
+      return
+    }
+
+    if (greetingMode === 'easter-egg') {
+      setGreetingFadingOut(true)
+      fadeTimerRef.current = setTimeout(() => {
+        setGreetingMode('normal')
+        setGreetingFadingOut(false)
+        fadeTimerRef.current = null
+      }, GREETING_FADE_MS)
+    }
+  }, [easterEggActive, greetingMode])
+
+  useEffect(
+    () => () => {
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
+    },
+    [],
+  )
+
+  const isEasterEggGreeting = greetingMode === 'easter-egg'
+  const greetingText = isEasterEggGreeting
+    ? DASHBOARD_EASTER_EGG_MESSAGE
+    : `${helloGreeting}!`
+  const greetingAnimationClass = isEasterEggGreeting
+    ? greetingFadingOut
+      ? 'animate-easter-egg-fade-out'
+      : 'animate-easter-egg-fade-in'
+    : 'animate-easter-egg-fade-in'
 
   const today = useMemo(() => new Date(), [])
   const viewYear = today.getFullYear()
@@ -164,8 +209,11 @@ export function DashboardView() {
   return (
     <section className="space-y-6 pb-2 lg:space-y-8">
       <header className="flex flex-col items-start gap-2 text-left">
-        <h1 className="text-4xl font-extrabold tracking-tight text-mint-600 dark:text-mint-400 sm:text-5xl">
-          {helloGreeting}!
+        <h1
+          key={greetingMode}
+          className={`text-4xl font-extrabold tracking-tight text-mint-600 dark:text-mint-400 sm:text-5xl ${greetingAnimationClass}`}
+        >
+          {greetingText}
         </h1>
         <p className="text-base text-ink-muted dark:text-zinc-400 lg:text-lg">
           Welcome to RTodo

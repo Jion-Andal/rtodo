@@ -55,6 +55,7 @@
   --shadow-fab: 0 4px 14px rgb(13 148 136 / 0.35);
 
   --animate-easter-egg-fade-in: easter-egg-fade-in 0.45s ease-out both;
+  --animate-easter-egg-fade-out: easter-egg-fade-out 0.45s ease-in both;
   --animate-easter-egg-backdrop: easter-egg-backdrop 1.1s ease-out 0.4s both;
 }
 
@@ -213,6 +214,17 @@ textarea {
   }
 }
 
+@keyframes easter-egg-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
 @keyframes easter-egg-backdrop {
   from {
     backdrop-filter: blur(0);
@@ -268,6 +280,7 @@ textarea {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-easter-egg-fade-in,
+  .animate-easter-egg-fade-out,
   .easter-egg-backdrop {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
