@@ -21,7 +21,7 @@ export function EventForm({ entry, onSuccess }: EventFormProps) {
   const { addEntry, updateEntry } = useEntries()
   const [title, setTitle] = useState(entry?.title ?? '')
   const [date, setDate] = useState(entry?.date ?? '')
-  const [repeat, setRepeat] = useState<RepeatOption>(entry?.repeat ?? 'once')
+  const [repeat, setRepeat] = useState<RepeatOption>(entry?.repeat ?? 'never')
   const [repeatOn, setRepeatOn] = useState(entry?.repeatOn ?? '')
 
   const handleRepeatChange = (value: RepeatOption) => {
@@ -42,7 +42,10 @@ export function EventForm({ entry, onSuccess }: EventFormProps) {
       date,
       repeat,
       repeatOn: repeat === 'once' && repeatOn ? repeatOn : undefined,
-      completed: repeat === 'once' ? (entry?.completed ?? false) : false,
+      completed:
+        repeat === 'never' || repeat === 'once'
+          ? (entry?.completed ?? false)
+          : false,
       ...preserveEntryMeta(entry, username, Boolean(entry)),
     }
 

@@ -1,6 +1,6 @@
 export type Category = 'checklist' | 'notes' | 'events' | 'expenses'
 
-export type RepeatOption = 'once' | 'weekly' | 'monthly' | 'annually'
+export type RepeatOption = 'never' | 'once' | 'weekly' | 'monthly' | 'annually'
 
 export interface BaseEntry {
   id: string
@@ -36,7 +36,7 @@ export interface EventEntry extends BaseEntry {
 }
 
 export function eventShowsCheckbox(repeat: RepeatOption): boolean {
-  return repeat === 'once'
+  return repeat === 'never' || repeat === 'once'
 }
 
 export interface ExpenseLineItem {
@@ -80,6 +80,7 @@ export const CATEGORY_SINGULAR: Record<Category, string> = {
 }
 
 export const REPEAT_LABELS: Record<RepeatOption, string> = {
+  never: 'Never',
   once: 'Once',
   weekly: 'Weekly',
   monthly: 'Monthly',
