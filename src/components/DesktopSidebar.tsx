@@ -8,6 +8,10 @@ interface DesktopSidebarProps {
   collapsed: boolean
   onToggleCollapsed: () => void
   showCompleted?: boolean
+  onViewEventCalendar?: () => void
+  eventCalendarOpen?: boolean
+  onViewExpenseCalculations?: () => void
+  expenseCalculationsOpen?: boolean
 }
 
 export function DesktopSidebar({
@@ -16,6 +20,10 @@ export function DesktopSidebar({
   collapsed,
   onToggleCollapsed,
   showCompleted = false,
+  onViewEventCalendar,
+  eventCalendarOpen = false,
+  onViewExpenseCalculations,
+  expenseCalculationsOpen = false,
 }: DesktopSidebarProps) {
   return (
     <aside
@@ -69,6 +77,10 @@ export function DesktopSidebar({
         compact={collapsed}
         activeCategory={activeCategory}
         onCategoryChange={onCategoryChange}
+        onViewEventCalendar={onViewEventCalendar}
+        eventCalendarOpen={eventCalendarOpen}
+        onViewExpenseCalculations={onViewExpenseCalculations}
+        expenseCalculationsOpen={expenseCalculationsOpen}
         className={`flex-1 py-4 ${collapsed ? 'px-2' : 'px-3'}`}
       />
     </aside>

@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useEntries } from '../../context/EntriesContext'
-import type { EventEntry, RepeatOption } from '../../types'
+import type { EventEntry, EventColor, RepeatOption } from '../../types'
 import { preserveEntryMeta } from '../../utils/entryMeta'
-import { REPEAT_LABELS } from '../../types'
+import { DEFAULT_EVENT_COLOR, REPEAT_LABELS } from '../../types'
 import {
   FormField,
   inputClassName,
   Select,
   buttonPrimaryClassName,
 } from './FormField'
+import { EventColorPicker } from './EventColorPicker'
 
 interface EventFormProps {
   entry?: EventEntry
@@ -23,6 +24,7 @@ export function EventForm({ entry, onSuccess }: EventFormProps) {
   const [date, setDate] = useState(entry?.date ?? '')
   const [repeat, setRepeat] = useState<RepeatOption>(entry?.repeat ?? 'never')
   const [repeatOn, setRepeatOn] = useState(entry?.repeatOn ?? '')
+  const [color, setColor] = useState<EventColor>(entry?.color ?? DEFAULT_EVENT_COLOR)
 
   const handleRepeatChange = (value: RepeatOption) => {
     setRepeat(value)
@@ -42,6 +44,7 @@ export function EventForm({ entry, onSuccess }: EventFormProps) {
       date,
       repeat,
       repeatOn: repeat === 'once' && repeatOn ? repeatOn : undefined,
+      color,
       completed:
         repeat === 'never' || repeat === 'once'
           ? (entry?.completed ?? false)
@@ -78,6 +81,10 @@ export function EventForm({ entry, onSuccess }: EventFormProps) {
           className={inputClassName}
           required
         />
+      </FormField>
+
+      <FormField label="Color">
+        <EventColorPicker value={color} onChange={setColor} />
       </FormField>
 
       <FormField label="Repeat" optional>

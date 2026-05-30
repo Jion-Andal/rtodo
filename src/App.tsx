@@ -42,7 +42,18 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
   const [activeCategory, setActiveCategory] = useState<Category>('checklist')
   const [showCompleted, setShowCompleted] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [showEventCalendar, setShowEventCalendar] = useState(false)
+  const [showExpenseCalculations, setShowExpenseCalculations] = useState(false)
   const { inAppAlerts, dismissInAppAlerts } = useDueDateNotifications()
+
+  useEffect(() => {
+    if (activeCategory !== 'events') {
+      setShowEventCalendar(false)
+    }
+    if (activeCategory !== 'expenses') {
+      setShowExpenseCalculations(false)
+    }
+  }, [activeCategory])
 
   useEffect(() => {
     if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true') {
@@ -69,6 +80,10 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
           collapsed={sidebarCollapsed}
           onToggleCollapsed={toggleSidebarCollapsed}
           showCompleted={showCompleted}
+          onViewEventCalendar={() => setShowEventCalendar(true)}
+          eventCalendarOpen={showEventCalendar}
+          onViewExpenseCalculations={() => setShowExpenseCalculations(true)}
+          expenseCalculationsOpen={showExpenseCalculations}
         />
 
         <div className="flex min-w-0 flex-1 flex-col">
@@ -80,6 +95,10 @@ function AppContent({ onOpenSettings }: { onOpenSettings: () => void }) {
               category={activeCategory}
               showCompleted={showCompleted}
               onToggleCompleted={() => setShowCompleted((prev) => !prev)}
+              showCalendarModal={showEventCalendar}
+              onShowCalendarModalChange={setShowEventCalendar}
+              showExpenseCalculationsModal={showExpenseCalculations}
+              onShowExpenseCalculationsModalChange={setShowExpenseCalculations}
             />
           </main>
 

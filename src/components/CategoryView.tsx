@@ -23,11 +23,18 @@ import { NoteForm } from './forms/NoteForm'
 import { EventForm } from './forms/EventForm'
 import { ExpenseForm } from './forms/ExpenseForm'
 import { GroupMembersModal } from './GroupMembersModal'
+import { EventCalendarModal } from './EventCalendarModal'
+import { ExpenseCalculationsModal } from './ExpenseCalculationsModal'
+import type { EventEntry } from '../types'
 
 interface CategoryViewProps {
   category: Category
   showCompleted: boolean
   onToggleCompleted: () => void
+  showCalendarModal: boolean
+  onShowCalendarModalChange: (open: boolean) => void
+  showExpenseCalculationsModal: boolean
+  onShowExpenseCalculationsModalChange: (open: boolean) => void
 }
 
 function EntryForm({
@@ -71,7 +78,15 @@ function EntryForm({
   }
 }
 
-export function CategoryView({ category, showCompleted, onToggleCompleted }: CategoryViewProps) {
+export function CategoryView({
+  category,
+  showCompleted,
+  onToggleCompleted,
+  showCalendarModal,
+  onShowCalendarModalChange,
+  showExpenseCalculationsModal,
+  onShowExpenseCalculationsModalChange,
+}: CategoryViewProps) {
   const { username } = useAuth()
   const { activeGroupId, activeGroupName, groups } = useGroups()
   const activeGroup = groups.find((g) => g.id === activeGroupId)
@@ -326,6 +341,78 @@ export function CategoryView({ category, showCompleted, onToggleCompleted }: Cat
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteEntryTarget(null)}
       />
+
+      {category === 'events' && (
+        <>
+          <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] z-10 lg:hidden">
+            <div className="content-shell flex justify-end">
+              <button
+                type="button"
+                onClick={() => onShowCalendarModalChange(true)}
+                aria-label="Open event calendar"
+                className="btn-fab pointer-events-auto h-12 w-12"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM13.5 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 6a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v9.75a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V8.25z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <EventCalendarModal
+            open={showCalendarModal}
+            onClose={() => onShowCalendarModalChange(false)}
+            onEdit={(entry: EventEntry) => setEditingEntry(entry)}
+          />
+        </>
+      )}
+
+      {category === 'expenses' && (
+        <>
+          <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] z-10 lg:hidden">
+            <div className="content-shell flex justify-end">
+              <button
+                type="button"
+                onClick={() => onShowExpenseCalculationsModalChange(true)}
+                aria-label="View expense calculations"
+                className="btn-fab pointer-events-auto h-12 w-12"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.75}
+                  stroke="currentColor"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9.5v5.25A2.25 2.25 0 005.25 17h13.5A2.25 2.25 0 0021 14.75V9.5M12 3v6m0 0-3-3m3 3 3-3M3 9.5h18"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <ExpenseCalculationsModal
+            open={showExpenseCalculationsModal}
+            onClose={() => onShowExpenseCalculationsModalChange(false)}
+          />
+        </>
+      )}
 
       {addEasterEggMessage && (
         <div

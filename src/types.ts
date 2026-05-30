@@ -2,6 +2,21 @@ export type Category = 'checklist' | 'notes' | 'events' | 'expenses'
 
 export type RepeatOption = 'never' | 'once' | 'weekly' | 'monthly' | 'annually'
 
+export type EventColor = 'mint' | 'peach' | 'sage' | 'sky' | 'rose' | 'violet'
+
+export const EVENT_COLORS: EventColor[] = ['mint', 'peach', 'sage', 'sky', 'rose', 'violet']
+
+export const DEFAULT_EVENT_COLOR: EventColor = 'mint'
+
+export const EVENT_COLOR_LABELS: Record<EventColor, string> = {
+  mint: 'Mint',
+  peach: 'Peach',
+  sage: 'Sage',
+  sky: 'Sky',
+  rose: 'Rose',
+  violet: 'Violet',
+}
+
 export interface BaseEntry {
   id: string
   title: string
@@ -33,6 +48,7 @@ export interface EventEntry extends BaseEntry {
   date: string
   repeat: RepeatOption
   repeatOn?: string
+  color?: EventColor
 }
 
 export function eventShowsCheckbox(repeat: RepeatOption): boolean {
